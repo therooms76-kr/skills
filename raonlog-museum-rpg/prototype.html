@@ -1,0 +1,704 @@
+<title>라온로그 고양이 박물관</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Press+Start+2P&display=swap">
+<style>
+:root{
+  --ground:#EEF0EB; --paper:#F7F8F4; --ink:#1E2320; --ink-2:#4A524D; --ink-3:#7A827C;
+  --line:#D5DAD3; --line-2:#C2C9C1;
+  --bronze:#8A6A3B; --bronze-2:#B8955E; --teal:#1E7A72; --teal-soft:#DCEFEC;
+  --wall:#DED4C3; --wall-2:#CFC3AE; --floor:#B48F62; --floor-2:#9E7A50; --dark-room:#2B2622;
+  --yarn:#D95F5F; --ok:#2F7D4A; --warn:#B7791F;
+  --shadow:0 1px 2px rgba(30,35,32,.08), 0 8px 24px rgba(30,35,32,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#181B19; --paper:#20241F; --ink:#E8E6DF; --ink-2:#BDBBB2; --ink-3:#8C8A82;
+    --line:#333833; --line-2:#444A44;
+    --bronze:#C9A263; --bronze-2:#8A6A3B; --teal:#5FC2B7; --teal-soft:#1D3532;
+    --wall:#4D4438; --wall-2:#3E362C; --floor:#6E5636; --floor-2:#5A4529; --dark-room:#141110;
+    --yarn:#E88080; --ok:#6BC58A; --warn:#E0A94A;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#181B19; --paper:#20241F; --ink:#E8E6DF; --ink-2:#BDBBB2; --ink-3:#8C8A82;
+  --line:#333833; --line-2:#444A44;
+  --bronze:#C9A263; --bronze-2:#8A6A3B; --teal:#5FC2B7; --teal-soft:#1D3532;
+  --wall:#4D4438; --wall-2:#3E362C; --floor:#6E5636; --floor-2:#5A4529; --dark-room:#141110;
+  --yarn:#E88080; --ok:#6BC58A; --warn:#E0A94A;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--teal)}
+h1,h2,h3{font-family:"Gowun Batang","Nanum Myeongjo",Georgia,serif;line-height:1.3;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,5vw,44px);font-weight:700}
+h2{font-size:26px;font-weight:700}
+h3{font-size:19px;font-weight:700}
+p{margin:0 0 14px}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.wide{max-width:980px;margin:0 auto;padding:0 20px}
+.eyebrow{font-family:"Press Start 2P",monospace;font-size:10px;letter-spacing:.06em;color:var(--bronze);text-transform:uppercase}
+.mono{font-family:"Press Start 2P",monospace;font-size:10px;letter-spacing:.04em}
+header{padding:56px 0 28px;border-bottom:1px solid var(--line)}
+header .lede{font-size:18px;color:var(--ink-2);max-width:62ch;margin-top:18px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:20px;font-size:13px;color:var(--ink-3)}
+.meta b{color:var(--ink-2);font-weight:500}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;background:var(--teal-soft);color:var(--teal)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+nav.toc{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--ground) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.toc .wide{display:flex;gap:4px;overflow-x:auto;padding-top:8px;padding-bottom:8px;scrollbar-width:none}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--ink-2);font-size:13px;padding:6px 10px;border-radius:6px}
+nav.toc a:hover{background:var(--paper);color:var(--ink)}
+section{padding:52px 0 8px}
+section>.wrap>h2, section>.wide>h2{margin-bottom:8px}
+.sub{color:var(--ink-3);font-size:14px;margin-bottom:24px}
+.sec-num{display:block;font-family:"Press Start 2P",monospace;font-size:10px;color:var(--bronze);margin-bottom:12px;letter-spacing:.08em}
+
+.glance{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.glance div{background:var(--paper);border:1px solid var(--line);padding:18px 18px 12px;border-radius:8px}
+.glance h3{font-size:15px;font-family:inherit;margin-bottom:8px;color:var(--bronze)}
+.glance p{font-size:14px;color:var(--ink-2);margin:0}
+@media (max-width:720px){.glance{grid-template-columns:1fr}}
+
+.note{border-left:3px solid var(--warn);background:var(--paper);padding:14px 18px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink-2);margin:18px 0 24px}
+.note b{color:var(--ink)}
+.tip{border-left:3px solid var(--teal);background:var(--teal-soft);padding:14px 18px;border-radius:0 8px 8px 0;font-size:14px;margin:18px 0 24px}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+.tbl{overflow-x:auto;margin:10px 0 24px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+th{font-weight:600;text-align:left;padding:12px 14px;border-bottom:2px solid var(--line-2);color:var(--ink-2);font-size:12px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.55}
+tr:last-child td{border-bottom:0}
+td.k{font-weight:600;color:var(--ink);white-space:nowrap}
+td.q{color:var(--ink-2);font-style:normal}
+td.q::before{content:"“";color:var(--bronze-2)}
+td.q::after{content:"”";color:var(--bronze-2)}
+td.arrow{color:var(--teal);font-weight:500}
+
+.map{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px;margin:10px 0 18px;overflow-x:auto}
+.map svg{display:block;width:100%;height:auto;min-width:640px}
+.map text{font-family:"IBM Plex Sans KR",system-ui,sans-serif;fill:var(--ink)}
+.map .lbl{font-size:12px;fill:var(--ink-2)}
+.map .tiny{font-family:"Press Start 2P",monospace;font-size:7px;fill:var(--bronze)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--ink-2);margin-bottom:10px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+
+/* ---------- prototype ---------- */
+.proto{background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;margin:14px 0 10px}
+.proto-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tabs button{font:inherit;font-size:12px;font-weight:500;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--ink-2);cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.tabs button:focus-visible,.ctl button:focus-visible,.frame:focus-visible,.door:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.toggles{display:flex;gap:14px;font-size:13px;color:var(--ink-2)}
+.toggles label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.stage{position:relative;width:100%;aspect-ratio:16/9;user-select:none;overflow:hidden;background:var(--wall)}
+.stage .wallpaper{position:absolute;inset:0 0 44% 0;background:
+  linear-gradient(180deg,rgba(255,255,255,.14),rgba(0,0,0,0) 40%),
+  repeating-linear-gradient(90deg,transparent 0 46px,rgba(0,0,0,.035) 46px 48px), var(--wall)}
+.stage .rail{position:absolute;left:0;right:0;top:calc(56% - 10px);height:10px;background:var(--wall-2);border-top:2px solid rgba(0,0,0,.12)}
+.stage .floor{position:absolute;inset:56% 0 0 0;background:
+  repeating-linear-gradient(90deg,transparent 0 118px,rgba(0,0,0,.14) 118px 120px),
+  repeating-linear-gradient(180deg,var(--floor) 0 22px,var(--floor-2) 22px 24px)}
+.stage[data-dark="1"] .wallpaper{background:var(--dark-room)}
+.stage[data-dark="1"] .floor{filter:brightness(.45)}
+.stage[data-dark="1"] .rail{background:#1a1613}
+.spot{position:absolute;top:0;width:260px;height:56%;pointer-events:none;background:radial-gradient(ellipse at 50% 0%,rgba(255,230,180,.55),rgba(255,230,180,0) 70%);display:none}
+.stage[data-dark="1"] .spot{display:block}
+.frame{position:absolute;top:9%;width:15%;aspect-ratio:4/3;border:0;padding:0;background:transparent;cursor:pointer;transform:translateX(-50%)}
+.frame .mat{position:absolute;inset:0;border:6px solid var(--bronze);outline:2px solid rgba(0,0,0,.25);outline-offset:-2px;box-shadow:0 3px 0 rgba(0,0,0,.25),inset 0 0 0 4px #F3ECDD;background:#F3ECDD;transition:transform .15s}
+.frame .art{position:absolute;inset:10px;image-rendering:pixelated}
+.frame.near .mat{transform:translateY(-3px);box-shadow:0 0 0 3px var(--teal),0 6px 0 rgba(0,0,0,.25),inset 0 0 0 4px #F3ECDD}
+.frame.seen::after{content:"";position:absolute;right:-6px;top:-6px;width:14px;height:14px;border-radius:50%;background:var(--ok);border:2px solid var(--paper)}
+.plaque{position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);width:120%;font-size:10px;line-height:1.3;color:var(--ink);background:#EFE9DC;border:1px solid #C9BE9F;padding:3px 5px;text-align:center;opacity:.85;pointer-events:none;color:#2B2622}
+.frame.near .plaque{opacity:1;background:#FFF9E8;border-color:var(--teal);font-size:11px;width:150%}
+.plaque small{display:block;color:#6B6558;font-size:9px}
+.door{position:absolute;top:14%;height:40%;width:9%;border:0;padding:0;background:#6B4E2E;border:4px solid #4A3520;border-bottom:0;cursor:pointer;box-shadow:inset 0 0 0 3px #7E5D38}
+.door.l{left:1.5%}.door.r{right:1.5%}
+.door span{position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);white-space:nowrap;font-size:10px;color:#2B2622;background:#EFE9DC;border:1px solid #C9BE9F;padding:1px 6px}
+.door::after{content:"";position:absolute;right:6px;top:50%;width:6px;height:6px;border-radius:50%;background:#D9B663}
+.door.near{box-shadow:inset 0 0 0 3px #7E5D38,0 0 0 3px var(--teal)}
+.cat{position:absolute;width:48px;height:48px;image-rendering:pixelated;transform:translate(-50%,-100%);pointer-events:none;filter:drop-shadow(0 6px 2px rgba(0,0,0,.25))}
+.trail{position:absolute;inset:0;pointer-events:none}
+.hud{position:absolute;left:10px;top:10px;font-family:"Press Start 2P",monospace;font-size:9px;line-height:1.9;color:#FFF;background:rgba(20,17,15,.72);padding:8px 10px;border-radius:4px;pointer-events:none}
+.hud b{color:#F2D28A;font-weight:400}
+.hint{position:absolute;right:10px;top:10px;font-size:11px;color:#FFF;background:rgba(20,17,15,.62);padding:6px 10px;border-radius:4px;pointer-events:none}
+.bubble{position:absolute;transform:translate(-50%,-100%);background:#FFF;color:#2B2622;border:2px solid #2B2622;border-radius:8px;padding:5px 9px;font-size:12px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s}
+.bubble.on{opacity:1}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-8px;width:10px;height:10px;background:#FFF;border-right:2px solid #2B2622;border-bottom:2px solid #2B2622;transform:translateX(-50%) rotate(45deg)}
+.ctl{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-top:1px solid var(--line);flex-wrap:wrap}
+.ctl .pad{display:grid;grid-template-columns:repeat(3,38px);gap:4px}
+.ctl button{font:inherit;font-size:14px;width:38px;height:34px;border-radius:6px;border:1px solid var(--line-2);background:var(--ground);color:var(--ink);cursor:pointer}
+.ctl button.act{width:auto;padding:0 14px;background:var(--teal);color:#fff;border-color:var(--teal);font-weight:500}
+.ctl small{color:var(--ink-3);font-size:12px}
+/* viewer */
+.viewer{position:absolute;inset:0;background:rgba(20,17,15,.96);backdrop-filter:blur(6px);display:none;color:#F1EDE4;padding:22px;overflow:auto}
+.viewer.on{display:block}
+.viewer .card{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;max-width:820px;margin:0 auto}
+.viewer .img{border:8px solid var(--bronze);background:#F3ECDD;padding:6px;aspect-ratio:4/3}
+.viewer .img div{width:100%;height:100%;image-rendering:pixelated}
+.viewer h3{font-size:22px;color:#FFF;margin-bottom:4px}
+.viewer .vm{font-size:12px;color:#CFC8BA;margin-bottom:10px}
+.viewer .vm span{margin-right:10px}
+.viewer p{font-size:14px;color:#E3DED2;line-height:1.65}
+.viewer .btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
+.viewer button{font:inherit;font-size:13px;padding:7px 12px;border-radius:6px;border:1px solid #7E7466;background:transparent;color:#F1EDE4;cursor:pointer}
+.viewer button.primary{background:var(--bronze);border-color:var(--bronze);color:#1A1511;font-weight:600}
+.viewer button.close{position:absolute;right:14px;top:12px;width:34px;height:34px;padding:0;font-size:18px}
+.viewer .rel h4{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#B8AE9B;margin:0 0 8px;font-weight:600}
+.viewer .rel .chips{display:flex;flex-direction:column;gap:6px}
+.viewer .rel button{display:flex;justify-content:space-between;gap:10px;text-align:left;width:100%;font-size:13px;border-color:#4E463C;background:rgba(255,255,255,.04)}
+.viewer .rel button em{font-style:normal;font-size:10px;color:#F2D28A;white-space:nowrap;font-family:"Press Start 2P",monospace}
+@media (max-width:640px){.viewer .card{grid-template-columns:1fr}.hint{display:none}.frame .plaque{display:none}.frame.near .plaque{display:block}}
+.caption{font-size:13px;color:var(--ink-3);margin:8px 0 20px}
+
+/* options / decisions */
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0 18px}
+.opt{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:14px}
+.opt .t{display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:6px}
+.opt .t .mono{color:var(--bronze)}
+.opt p{color:var(--ink-2);margin:0 0 8px;font-size:13.5px}
+.opt.rec{border-color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal)}
+.opt .tag{font-size:11px;font-weight:600;color:var(--teal)}
+@media (max-width:720px){.opts{grid-template-columns:1fr}}
+.dec{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin:14px 0}
+.dec .dh{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.dec .dh .mono{color:var(--bronze);flex:none}
+.dec .dh h3{font-size:18px}
+.dec .why{font-size:14px;color:var(--ink-2);margin-bottom:10px}
+.dec .rec-line{display:flex;gap:10px;align-items:flex-start;font-size:14px;background:var(--teal-soft);border-radius:6px;padding:10px 12px;margin-top:8px}
+.dec .rec-line b{color:var(--teal);flex:none}
+.dec .ask{margin-top:10px;font-size:13px;color:var(--ink-3);border-top:1px dashed var(--line-2);padding-top:8px}
+.dec table td{font-size:13.5px}
+.dec .tbl{margin:8px 0 6px}
+
+ol.road{list-style:none;padding:0;margin:14px 0 20px;display:grid;gap:0}
+ol.road li{display:grid;grid-template-columns:110px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+ol.road li:last-child{border-bottom:0}
+ol.road .ph{font-family:"Press Start 2P",monospace;font-size:9px;color:var(--bronze);line-height:1.8}
+ol.road .ph small{display:block;font-family:"IBM Plex Sans KR",sans-serif;font-size:12px;color:var(--ink-3)}
+ol.road b{display:block;font-weight:600;margin-bottom:2px}
+ol.road p{font-size:14px;color:var(--ink-2);margin:0}
+ul.check{list-style:none;padding:0;margin:12px 0 20px}
+ul.check li{padding:9px 0 9px 30px;border-bottom:1px solid var(--line);font-size:14.5px;position:relative}
+ul.check li::before{content:"";position:absolute;left:2px;top:13px;width:16px;height:16px;border:2px solid var(--line-2);border-radius:4px}
+ul.check li b{font-weight:600}
+ul.check li small{display:block;color:var(--ink-3);font-size:13px}
+.terms{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 20px}
+.term{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:13.5px}
+.term b{display:block;font-weight:600;margin-bottom:2px}
+.term span{color:var(--ink-2)}
+@media (max-width:640px){.terms{grid-template-columns:1fr}}
+footer{padding:36px 0 60px;color:var(--ink-3);font-size:13px;border-top:1px solid var(--line);margin-top:40px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Raonlog × National Museum × RPG</div>
+    <h1 style="margin-top:14px">고양이가 안내하는<br>라온로그 박물관</h1>
+    <p class="lede">라온로그 블로그를 <b>“고양이 캐릭터가 방(카테고리)을 돌아다니며, 벽에 걸린 액자(대표 이미지)를 보면 글이 열리는 작은 박물관”</b>으로 바꾸기 위한 계획안입니다. 국립중앙박물관에서 사람들이 실제로 어떻게 관람하는지를 먼저 분석하고, 그 방식을 블로그에 옮기는 구조와 8개의 결정 지점을 정리했습니다.</p>
+    <div class="meta">
+      <span><b>상태</b> 초안 v0.1 · 토의용</span>
+      <span><b>작성일</b> 2026-09-06</span>
+      <span><b>대상</b> 허킹 가족 블로그 Raonlog (영어 블로그, 카테고리 5개)</span>
+      <span class="pill warn">결정 필요 8건</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="wide">
+  <a href="#s0">한눈에</a><a href="#s1">1 관람 분석</a><a href="#s2">2 구조</a><a href="#s3">3 프로토타입</a><a href="#s4">4 연결 표현</a><a href="#s5">5 결정 지점</a><a href="#s6">6 로드맵</a><a href="#s7">7 필요한 것</a><a href="#s8">8 용어</a><a href="#s9">9 근거와 한계</a>
+</div></nav>
+
+<section id="s0"><div class="wrap">
+  <span class="sec-num">OVERVIEW</span>
+  <h2>한눈에 보기</h2>
+  <div class="glance">
+    <div><h3>무엇을 만드나</h3><p>블로그 첫 화면이 <b>박물관 로비</b>가 됩니다. 고양이를 움직여 5개의 전시실(카테고리)에 들어가면, 벽에 걸린 액자가 곧 블로그 글입니다. 액자 앞에 서면 명판(제목·날짜·한 줄 요약)이 보이고, 클릭하면 글을 읽습니다. 글 안에서 옆 액자로 넘기거나, 이어지는 글로 건너뜁니다.</p></div>
+    <div><h3>왜 박물관인가</h3><p>박물관은 “많은 것 중에서 무엇을, 어떤 순서로 볼지”를 수십 년간 다듬어 온 공간입니다. 관람객이 힘들어하는 점(너무 넓다, 뭘 봐야 할지 모르겠다)과 좋아하는 점(대표작 한 점, 추천 코스, 설명 명판)이 블로그 방문자의 고민과 거의 같습니다.</p></div>
+    <div><h3>지금 결정할 것</h3><p>5장에 8개의 결정 지점을 두었습니다. 각각 선택지·제 추천·이유를 적었습니다. 답을 정하시면 그대로 1단계(방 하나짜리 프로토타입) 제작에 들어갈 수 있습니다. 3장의 프로토타입을 먼저 만져 보시면 판단이 쉬워집니다.</p></div>
+  </div>
+</div></section>
+
+<section id="s1"><div class="wrap">
+  <span class="sec-num">01 · 관람 행태 분석</span>
+  <h2>국립중앙박물관에서 사람들은 어떻게 보는가</h2>
+  <p class="sub">여러 관람객의 의견을 7가지 패턴으로 묶고, 박물관이 그 문제를 어떻게 풀었는지, 그 해법을 블로그에 어떻게 옮길지 나란히 적었습니다.</p>
+  <div class="note"><b>조사 방식에 대한 솔직한 안내.</b> 이 세션의 네트워크 정책이 박물관 공식 사이트, 트립어드바이저, 네이버, 위키 등 외부 접근을 모두 차단해 <b>실시간 후기 수집은 하지 못했습니다.</b> 아래 7가지 패턴은 제가 학습한 범위에서 널리 반복되는 관람 후기와 박물관 관람 행동 연구(박물관 피로, 동선 연구)를 바탕으로 정리한 것입니다. 9장에 “직접 확인해 주실 근거 5개”를 따로 두었으니, 그것만 확인하시면 됩니다.</div>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>관람객 목소리 (요약)</th><th>박물관의 대응</th><th>블로그로 옮기면</th></tr></thead>
+    <tbody>
+      <tr><td class="k">1</td><td class="q">너무 넓어서 다 못 봤다. 두 시간 지나니 다리도 눈도 지친다.</td><td>1시간·2시간 <b>추천 코스</b>, 층별 안내도, 대표 유물 위주 배치</td><td class="arrow">방마다 액자 6~8개만 걸고, 나머지는 ‘수장고(전체 목록)’로. 첫 방문자용 ‘30분 코스’ 제공.</td></tr>
+      <tr><td class="k">2</td><td class="q">1층 ‘역사의 길’을 따라 걸으면 길을 잃지 않는다. 시대순이라 흐름이 있다.</td><td>건물 중앙을 관통하는 <b>큰 복도(역사의 길)</b>, 양옆으로 전시실 분기</td><td class="arrow">로비 = 최근 글 순서의 긴 복도. 복도 양옆 문이 5개 카테고리 방. 어디서든 복도로 돌아오면 현재 위치를 알 수 있음.</td></tr>
+      <tr><td class="k">3</td><td class="q">‘사유의 방’ 하나 보러 갔다. 어두운 방에 반가사유상 두 점만 있는데 그게 제일 기억에 남는다.</td><td>대표작 1~2점에 방 하나를 통째로 주는 <b>몰입형 특별실</b></td><td class="arrow">‘사유의 방’ = 이달의 글 또는 가장 아끼는 글 1편만 걸린 어두운 방. 조명 하나, 액자 하나.</td></tr>
+      <tr><td class="k">4</td><td class="q">아이랑 가면 어린이박물관과 실감영상관이 최고다. 만지고 움직이는 게 있어야 아이가 버틴다.</td><td>별도 예약제 <b>어린이박물관</b>, 벽 전체가 움직이는 <b>실감영상관</b></td><td class="arrow">라온이 방(Korean Parenting)에는 만지면 반응하는 소품. 고양이가 액자에 가까이 가면 액자가 살짝 들썩이는 반응.</td></tr>
+      <tr><td class="k">5</td><td class="q">유물 옆 설명 패널과 오디오 가이드 번호 덕에 이해가 됐다. 도슨트 해설 들으면 완전히 다르다.</td><td>모든 유물에 <b>명판</b>(이름·시대·재료·한 줄 설명), 번호형 오디오 가이드, 도슨트 투어</td><td class="arrow">액자마다 명판(제목·날짜·카테고리·한 줄 요약). 클릭 전에 미리 읽고 고를 수 있게. ‘도슨트 코스’ = 큐레이션 시리즈.</td></tr>
+      <tr><td class="k">6</td><td class="q">경천사 십층석탑 앞, 사유의 방은 사진 찍기 좋다. 중간에 카페에서 쉬었다.</td><td><b>포토 스팟</b>과 휴게 공간(카페, 정원)을 동선 중간에 배치</td><td class="arrow">글 보기 화면에 공유 버튼. 로비 한쪽에 ‘카페’ = 소개(About)와 방명록. 쉬는 곳이 있어야 오래 머문다.</td></tr>
+      <tr><td class="k">7</td><td class="q">같은 시대, 같은 재료의 유물이 연결돼 보이면 더 재밌다. 온라인 소장품 검색의 ‘관련 유물’이 유용했다.</td><td>전시 동선의 시대 연결, 온라인 소장품의 <b>관련 소장품 추천</b></td><td class="arrow">글 사이의 연결(같은 나들이, 같은 장소, 같은 등장인물)을 눈에 보이게 표현. 4장에서 3가지 방식 제안.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tip"><b>한 줄 요약.</b> 관람객은 “다 보기”를 포기하고 “대표작 + 추천 코스 + 설명 명판”에 기댑니다. 블로그도 ‘모든 글 목록’ 대신 ‘방마다 몇 개의 액자 + 명판 + 이어지는 글’로 보여 주면 같은 효과가 납니다.</div>
+  <h3 style="margin-top:20px">참고: 박물관 행동 연구에서 자주 인용되는 사실 3가지</h3>
+  <p style="font-size:14.5px;color:var(--ink-2)">① <b>박물관 피로(museum fatigue)</b>: 관람 시작 30~45분이 지나면 유물 하나에 머무는 시간이 눈에 띄게 짧아집니다. → 방 하나에 액자를 너무 많이 걸지 않을 이유. ② <b>우회전 경향</b>: 입장 후 많은 사람이 오른쪽으로 먼저 돕니다. → 로비에서 오른쪽 첫 문에 가장 보여 주고 싶은 방을 둘 이유. ③ <b>출구 끌림(exit gradient)</b>: 출구가 보이면 남은 전시를 건너뜁니다. → 글 보기 화면에서 ‘닫기’보다 ‘다음 전시’를 더 크게 둘 이유.</p>
+</div></section>
+
+<section id="s2"><div class="wide">
+  <span class="sec-num">02 · 공간 구조</span>
+  <h2>박물관 평면도로 본 블로그 구조</h2>
+  <p class="sub">현재 카테고리 5개를 그대로 방 5개로 씁니다. 여기에 박물관에서 배운 세 공간(복도·특별실·수장고)을 더합니다.</p>
+  <div class="legend"><span><i style="background:var(--wall)"></i>전시실 = 카테고리</span><span><i style="background:var(--floor)"></i>로비 복도 = 최근 글 순서</span><span><i style="background:var(--dark-room)"></i>사유의 방 = 대표 글 1편</span><span><i style="background:var(--teal-soft);border:1px solid var(--teal)"></i>수장고 = 전체 글 목록(검색)</span></div>
+  <div class="map">
+  <svg viewBox="0 0 900 420" role="img" aria-label="라온로그 박물관 평면도: 가운데 복도, 양옆 다섯 개 전시실, 끝에 사유의 방, 입구 옆 카페와 수장고">
+    <rect x="1" y="1" width="898" height="418" rx="10" fill="var(--paper)" stroke="var(--line-2)"/>
+    <!-- corridor -->
+    <rect x="80" y="170" width="740" height="80" fill="var(--floor)" opacity=".9"/>
+    <text x="450" y="200" text-anchor="middle" class="lbl" fill="#fff" style="fill:#FFF8EA;font-weight:600">로비 복도 · 최근 글이 시간순으로 걸린 긴 벽 (역사의 길)</text>
+    <text x="450" y="222" text-anchor="middle" class="tiny">LATEST → OLDER</text>
+    <!-- entrance -->
+    <rect x="20" y="180" width="60" height="60" fill="var(--teal-soft)" stroke="var(--teal)"/>
+    <text x="50" y="205" text-anchor="middle" class="lbl">입구</text><text x="50" y="222" text-anchor="middle" class="lbl">(홈)</text>
+    <!-- rooms top -->
+    <g>
+      <rect x="120" y="40" width="200" height="110" fill="var(--wall)" stroke="var(--line-2)"/>
+      <text x="220" y="80" text-anchor="middle" style="font-weight:600">라온이의 방</text>
+      <text x="220" y="100" text-anchor="middle" class="lbl">Korean Parenting</text>
+      <text x="220" y="120" text-anchor="middle" class="lbl">만지면 반응하는 소품</text>
+      <rect x="205" y="150" width="30" height="20" fill="var(--floor-2)"/>
+    </g>
+    <g>
+      <rect x="350" y="40" width="200" height="110" fill="var(--wall)" stroke="var(--line-2)"/>
+      <text x="450" y="80" text-anchor="middle" style="font-weight:600">나들이 방</text>
+      <text x="450" y="100" text-anchor="middle" class="lbl">Family Adventures in Seoul</text>
+      <text x="450" y="120" text-anchor="middle" class="lbl">가장 글이 많은 방 · 오른쪽 첫 문</text>
+      <rect x="435" y="150" width="30" height="20" fill="var(--floor-2)"/>
+    </g>
+    <g>
+      <rect x="580" y="40" width="200" height="110" fill="var(--wall)" stroke="var(--line-2)"/>
+      <text x="680" y="80" text-anchor="middle" style="font-weight:600">맛집 방</text>
+      <text x="680" y="100" text-anchor="middle" class="lbl">Food &amp; Dining</text>
+      <text x="680" y="120" text-anchor="middle" class="lbl">식탁 모양 진열대</text>
+      <rect x="665" y="150" width="30" height="20" fill="var(--floor-2)"/>
+    </g>
+    <!-- rooms bottom -->
+    <g>
+      <rect x="120" y="270" width="200" height="110" fill="var(--wall)" stroke="var(--line-2)"/>
+      <rect x="205" y="250" width="30" height="20" fill="var(--floor-2)"/>
+      <text x="220" y="310" text-anchor="middle" style="font-weight:600">건강 방</text>
+      <text x="220" y="330" text-anchor="middle" class="lbl">Health &amp; Wellness</text>
+      <text x="220" y="350" text-anchor="middle" class="lbl">산·강 풍경 벽</text>
+    </g>
+    <g>
+      <rect x="350" y="270" width="200" height="110" fill="var(--wall)" stroke="var(--line-2)"/>
+      <rect x="435" y="250" width="30" height="20" fill="var(--floor-2)"/>
+      <text x="450" y="310" text-anchor="middle" style="font-weight:600">메시의 방</text>
+      <text x="450" y="330" text-anchor="middle" class="lbl">Life with Messi</text>
+      <text x="450" y="350" text-anchor="middle" class="lbl">고양이 캐릭터의 집 · 캣타워</text>
+    </g>
+    <g>
+      <rect x="580" y="270" width="200" height="110" fill="var(--teal-soft)" stroke="var(--teal)"/>
+      <rect x="665" y="250" width="30" height="20" fill="var(--floor-2)"/>
+      <text x="680" y="310" text-anchor="middle" style="font-weight:600">수장고</text>
+      <text x="680" y="330" text-anchor="middle" class="lbl">전체 글 목록 · 검색 · 태그</text>
+      <text x="680" y="350" text-anchor="middle" class="lbl">게임을 건너뛰고 싶은 사람의 출구</text>
+    </g>
+    <!-- special room -->
+    <g>
+      <rect x="820" y="150" width="70" height="120" fill="var(--dark-room)"/>
+      <rect x="850" y="196" width="14" height="18" fill="#F2D28A"/>
+      <text x="855" y="290" text-anchor="middle" class="lbl">사유의 방</text>
+      <text x="855" y="306" text-anchor="middle" class="lbl">대표 글 1편</text>
+    </g>
+    <!-- cafe -->
+    <g>
+      <rect x="20" y="270" width="60" height="60" fill="var(--wall-2)" stroke="var(--line-2)"/>
+      <text x="50" y="296" text-anchor="middle" class="lbl">카페</text><text x="50" y="313" text-anchor="middle" class="lbl">소개·방명록</text>
+      <rect x="35" y="250" width="30" height="20" fill="var(--floor-2)"/>
+    </g>
+    <!-- connections: dashed yarn between rooms -->
+    <path d="M 450 150 C 450 200, 680 200, 680 150" fill="none" stroke="var(--yarn)" stroke-width="2" stroke-dasharray="5 4"/>
+    <path d="M 450 270 C 450 220, 220 220, 220 150" fill="none" stroke="var(--yarn)" stroke-width="2" stroke-dasharray="5 4"/>
+    <text x="565" y="240" class="lbl" style="fill:var(--yarn)">같은 나들이에서 나온 글끼리 실로 연결</text>
+    <text x="90" y="20" class="tiny">RAONLOG MUSEUM · FLOOR PLAN · DRAFT</text>
+  </svg>
+  </div>
+  <p style="font-size:14.5px;color:var(--ink-2)">방은 카테고리, 액자는 글, 명판은 글의 요약입니다. 복도·사유의 방·수장고는 새로 생기는 공간인데, 이 셋이 있어야 “길을 잃는 문제”(복도), “뭐가 제일 좋은지 모르는 문제”(사유의 방), “게임이 싫은 사람의 문제”(수장고)가 각각 풀립니다.</p>
+</div></section>
+
+<section id="s3"><div class="wide">
+  <span class="sec-num">03 · 만져 보는 프로토타입</span>
+  <h2>전시실 하나를 미리 걸어 보기</h2>
+  <p class="sub">글과 이미지는 라온로그 스타일의 <b>예시</b>입니다. 고양이도 임시 픽셀 그림이며, 보내 주실 캐릭터로 교체됩니다. 방향키(또는 W·A·S·D)로 걷고, 액자 앞에서 Enter 또는 클릭하면 글이 열립니다. 바닥을 클릭하면 그곳으로 걸어갑니다.</p>
+
+  <div class="proto">
+    <div class="proto-top">
+      <div class="tabs" id="tabs" role="tablist" aria-label="전시실 선택"></div>
+      <div class="toggles">
+        <label><input type="checkbox" id="yarnToggle"> 털실 자취 (4장 C안)</label>
+        <label><input type="checkbox" id="darkToggle"> 사유의 방 조명</label>
+      </div>
+    </div>
+    <div class="stage" id="stage" tabindex="0" aria-label="전시실. 방향키로 고양이를 움직이세요.">
+      <div class="wallpaper"></div>
+      <div class="spot" id="spot"></div>
+      <div class="rail"></div>
+      <div class="floor"></div>
+      <button class="door l" id="doorL"><span></span></button>
+      <button class="door r" id="doorR"><span></span></button>
+      <div id="frames"></div>
+      <canvas class="trail" id="trail"></canvas>
+      <canvas class="cat" id="cat" width="16" height="16"></canvas>
+      <div class="bubble" id="bubble"></div>
+      <div class="hud" id="hud"></div>
+      <div class="hint">← → 이동 · Enter 보기 · 바닥 클릭 이동</div>
+      <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="글 보기">
+        <button class="close" id="vClose" aria-label="닫기">×</button>
+        <div class="card">
+          <div><div class="img"><div id="vImg"></div></div></div>
+          <div>
+            <h3 id="vTitle"></h3>
+            <div class="vm" id="vMeta"></div>
+            <p id="vSummary"></p>
+            <div class="btns">
+              <button id="vPrev">◀ 이전 액자</button>
+              <button id="vNext">다음 액자 ▶</button>
+              <button class="primary" id="vRead">글 전체 읽기</button>
+            </div>
+            <div class="rel"><h4>이어 보기 · 연결된 글</h4><div class="chips" id="vRel"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ctl">
+      <div class="pad">
+        <span></span><button data-k="up" aria-label="위">▲</button><span></span>
+        <button data-k="left" aria-label="왼쪽">◀</button><button data-k="down" aria-label="아래">▼</button><button data-k="right" aria-label="오른쪽">▶</button>
+      </div>
+      <button class="act" id="btnAct">보기 / 들어가기</button>
+      <small>모바일에서는 이 버튼으로 움직입니다. 실제 구현에서는 화면을 탭한 곳으로 걸어가는 방식이 기본이 됩니다.</small>
+    </div>
+  </div>
+  <p class="caption">확인해 볼 것: ① 액자 앞에 서면 명판이 커지는 느낌 ② 글 보기에서 ‘다음 액자’로 옆 글로 넘어가는 흐름 ③ ‘이어 보기’에서 다른 방의 글로 건너뛰는 순간 ④ 문으로 옆 방에 가는 방식 ⑤ ‘사유의 방 조명’을 켰을 때의 분위기.</p>
+</div></section>
+
+<section id="s4"><div class="wrap">
+  <span class="sec-num">04 · 콘텐츠 연결 표현 (제안)</span>
+  <h2>글과 글이 이어져 있다는 걸 어떻게 보여 줄까</h2>
+  <p class="sub">라온로그 글은 한 번의 나들이에서 여러 글이 나옵니다. 예: 국립중앙박물관 방문 → 나들이 글, 근처 칼국수 글, 라온이 반응 육아 글. 이 관계를 자동으로 찾아 세 가지 방식으로 보여 줄 수 있습니다.</p>
+  <h3>먼저, 무엇이 ‘연결’인가 (연결 규칙 4가지)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>규칙</th><th>뜻</th><th>글에 적어 둘 정보</th><th>예</th></tr></thead>
+    <tbody>
+      <tr><td class="k">같은 나들이</td><td>같은 날, 같은 외출에서 나온 글</td><td><code>trip: 2026-09-05-museum</code></td><td>박물관 글 ↔ 칼국수 글</td></tr>
+      <tr><td class="k">같은 장소</td><td>다른 날이지만 같은 곳</td><td><code>place: 국립중앙박물관</code></td><td>봄 방문 글 ↔ 가을 방문 글</td></tr>
+      <tr><td class="k">같은 등장인물</td><td>라온이·슌님·메시가 중심인 글</td><td><code>people: [raon, messi]</code></td><td>메시 글 ↔ 라온이가 메시 돌본 글</td></tr>
+      <tr><td class="k">같은 주제 태그</td><td>계절, 음식 종류, 시리즈</td><td><code>tags: [autumn, noodles]</code></td><td>막국수 글 ↔ 칼국수 글</td></tr>
+    </tbody>
+  </table></div>
+  <p style="font-size:14px;color:var(--ink-2)">이 정보는 글 파일 맨 위(프런트매터)에 한두 줄 적는 것으로 끝납니다. 기존 글에는 제가 일괄로 채워 드릴 수 있습니다.</p>
+  <h3 style="margin-top:22px">보여 주는 방식 세 가지</h3>
+  <div class="opts">
+    <div class="opt rec"><div class="t"><span class="mono">A</span>명판 아래 ‘이어 보기’</div><p>글 보기 화면 아래에 연결된 글 3개를 카드로. 각 카드에 연결 이유(같은 나들이 / 같은 장소)를 작은 글씨로 표시. 박물관 온라인 소장품의 ‘관련 소장품’과 같은 방식.</p><span class="tag">추천 · 필수 · 프로토타입에 구현됨</span></div>
+    <div class="opt rec"><div class="t"><span class="mono">B</span>방 사이의 ‘연결 문’</div><p>한 나들이가 두 방에 걸쳐 있으면(나들이+맛집), 두 방 사이 벽에 작은 문이 생깁니다. 문 위 명판에 “박물관 가는 날 점심으로 이어짐”. 고양이가 그 문으로 지나가면 다른 방의 해당 액자 앞에 도착.</p><span class="tag">추천 · 2단계에서</span></div>
+    <div class="opt"><div class="t"><span class="mono">C</span>털실 자취</div><p>고양이가 지나간 길이 털실처럼 바닥에 남고, 방문한 액자끼리 실로 이어집니다. ‘내가 오늘 본 전시’가 한눈에 보이고, 고양이 캐릭터와 잘 어울리는 재미 요소. 프로토타입 상단 토글로 켤 수 있습니다.</p><span class="tag">후순위 · 재미 요소</span></div>
+  </div>
+  <p style="font-size:14px;color:var(--ink-2)">A는 글을 읽는 사람에게 필요한 기능이고, B는 방을 돌아다니는 사람에게 필요한 표현입니다. C는 없어도 되지만 “이 블로그 다르다”는 인상을 주는 요소라 나중에 넣을 가치가 있습니다.</p>
+</div></section>
+
+<section id="s5"><div class="wrap">
+  <span class="sec-num">05 · 결정 지점 8개</span>
+  <h2>함께 정해야 할 것</h2>
+  <p class="sub">각 항목마다 선택지, 제 추천, 이유를 적었습니다. 답은 “D1은 b, D2는 추천대로” 같은 식으로 짧게 주시면 됩니다. 순서대로 중요합니다.</p>
+
+  <div class="dec"><div class="dh"><span class="mono">D1</span><h3>게임 화면과 일반 블로그 화면의 관계</h3></div>
+    <p class="why">가장 큰 결정입니다. 검색 유입(구글), 모바일, 접근성, 그리고 만드는 비용이 모두 여기서 갈립니다.</p>
+    <div class="tbl"><table><tbody>
+      <tr><td class="k">a. 게임만</td><td>모든 것이 게임 안에서. 글도 게임 안 창에서 읽음.</td><td>몰입은 최고. 검색엔진이 글을 못 읽고, 모바일이 힘듦.</td></tr>
+      <tr><td class="k">b. 게임은 입구, 글은 일반 페이지</td><td>홈과 카테고리 탐색은 게임. 액자를 클릭하면 보통의 글 페이지로 이동.</td><td>검색·모바일·접근성 문제 없음. 대신 게임에서 글로 갈 때 ‘분위기가 끊기는’ 느낌.</td></tr>
+      <tr><td class="k">c. 두 화면 모두 완전</td><td>게임 안에서 미리보기(명판 확대)까지 보고, ‘전체 읽기’를 누르면 일반 페이지. 게임을 끄는 ‘수장고 모드’도 있음.</td><td>b의 장점을 다 가지면서 끊김이 적음. 만들 것이 조금 더 많음.</td></tr>
+    </tbody></table></div>
+    <div class="rec-line"><b>추천 c</b><span>박물관도 “유물 앞에 서기 → 명판 읽기 → 더 알아보기” 3단계입니다. 미리보기(명판)를 게임 안에 두고, 긴 글은 읽기 편한 보통 페이지에서 보는 것이 관람객 패턴 5번과 맞습니다. 프로토타입이 이 방식입니다.</span></div>
+    <div class="ask">확인 질문: 현재 라온로그는 구글 검색으로 들어오는 방문자가 있나요? 있다면 a는 제외해야 합니다.</div>
+  </div>
+
+  <div class="dec"><div class="dh"><span class="mono">D2</span><h3>카메라 시점</h3></div>
+    <p class="why">고양이 캐릭터를 어떻게 그려 주시느냐와 직접 연결됩니다. 시점이 정해져야 스프라이트(캐릭터 그림) 방향 수가 정해집니다.</p>
+    <div class="tbl"><table><tbody>
+      <tr><td class="k">a. 3/4 위에서 본 시점</td><td>포켓몬·스타듀밸리 방식. 뒷벽이 보여 액자를 걸 수 있고, 바닥을 자유롭게 걸음.</td><td>캐릭터가 앞·뒤·좌·우 4방향 필요.</td></tr>
+      <tr><td class="k">b. 옆에서 본 시점</td><td>횡스크롤. 벽 하나가 통째로 화면. 좌우로만 걸음.</td><td>캐릭터가 좌·우 2방향(하나 그리고 뒤집기). 가장 적은 그림.</td></tr>
+      <tr><td class="k">c. 아이소메트릭(비스듬한 입체)</td><td>동물의 숲·하보호텔 방식. 가장 예쁘지만 바닥·벽·가구를 모두 비스듬히 그려야 함.</td><td>캐릭터 4~8방향, 소품도 다 다시 그림.</td></tr>
+    </tbody></table></div>
+    <div class="rec-line"><b>추천 a</b><span>액자가 걸린 벽이 늘 보이면서도 방 안을 돌아다니는 느낌이 납니다. 다만 캐릭터를 2방향만 그리실 계획이면 b가 현실적입니다. 프로토타입은 a의 단순판(캐릭터는 좌우만)입니다.</span></div>
+    <div class="ask">확인 질문: 고양이 캐릭터를 몇 방향으로 그리실 수 있나요? (좌우 2방향 / 4방향)</div>
+  </div>
+
+  <div class="dec"><div class="dh"><span class="mono">D3</span><h3>움직이는 방법</h3></div>
+    <p class="why">데스크톱은 키보드가 자연스럽지만, 블로그 방문의 절반 이상은 보통 모바일입니다.</p>
+    <div class="tbl"><table><tbody>
+      <tr><td class="k">a. 키보드만</td><td>방향키·WASD.</td><td>모바일 불가.</td></tr>
+      <tr><td class="k">b. 탭한 곳으로 걸어가기</td><td>바닥이나 액자를 누르면 고양이가 그곳까지 걸어감.</td><td>모바일·데스크톱 모두 됨. 걷는 시간이 ‘연출’이 됨.</td></tr>
+      <tr><td class="k">c. b + 키보드 옵션</td><td>기본은 탭 이동, 키보드도 됨.</td><td>가장 넓게 커버.</td></tr>
+    </tbody></table></div>
+    <div class="rec-line"><b>추천 c</b><span>걸어가는 1초가 박물관에서 ‘유물 앞으로 다가가는’ 느낌을 줍니다. 단, 걷는 시간은 0.6초를 넘기지 않게 합니다. 이보다 길면 기다리는 시간이 됩니다.</span></div>
+  </div>
+
+  <div class="dec"><div class="dh"><span class="mono">D4</span><h3>방의 구성</h3></div>
+    <p class="why">카테고리 5개 외에 새로 생기는 공간을 얼마나 둘지.</p>
+    <div class="tbl"><table><tbody>
+      <tr><td class="k">a. 5개 방만</td><td>카테고리 = 방. 홈은 그중 첫 방.</td><td>단순. 길 잃기 쉬움.</td></tr>
+      <tr><td class="k">b. 로비 + 5개 방</td><td>홈은 로비(최근 글 복도). 문으로 방 입장.</td><td>관람 패턴 2번 해결.</td></tr>
+      <tr><td class="k">c. 로비 + 5개 방 + 사유의 방 + 수장고 + 카페</td><td>2장 평면도 그대로.</td><td>관람 패턴 1·2·3·6 모두 해결. 만들 것이 늘어남.</td></tr>
+    </tbody></table></div>
+    <div class="rec-line"><b>추천 c, 단 순서를 둠</b><span>1단계는 방 하나, 2단계에 로비와 5개 방, 3단계에 사유의 방·수장고·카페. 수장고는 ‘게임을 원치 않는 방문자의 출구’라 빠질 수 없습니다.</span></div>
+  </div>
+
+  <div class="dec"><div class="dh"><span class="mono">D5</span><h3>액자를 클릭했을 때</h3></div>
+    <p class="why">D1과 이어지는 세부 결정. 프로토타입에서 직접 느껴 보신 뒤 정하시면 됩니다.</p>
+    <div class="tbl"><table><tbody>
+      <tr><td class="k">a. 바로 글 페이지로</td><td>클릭 즉시 이동.</td><td>빠름. 고르기 전에 내용을 모름.</td></tr>
+      <tr><td class="k">b. 방 안에서 확대 창</td><td>사진 크게 + 제목·요약 + 이전/다음 + 이어 보기. ‘전체 읽기’로 글 페이지.</td><td>둘러보다 고르는 관람 방식과 같음.</td></tr>
+    </tbody></table></div>
+    <div class="rec-line"><b>추천 b</b><span>‘다음 액자’ 버튼을 ‘닫기’보다 크게 두는 것이 핵심입니다(출구 끌림 대응). 프로토타입에 구현되어 있습니다.</span></div>
+  </div>
+
+  <div class="dec"><div class="dh"><span class="mono">D6</span><h3>연결 표현 방식</h3></div>
+    <p class="why">4장의 A·B·C 중 어디까지.</p>
+    <div class="rec-line"><b>추천 A 필수 + B 2단계 + C 보류</b><span>A는 글 파일에 한두 줄 정보만 넣으면 자동으로 됩니다. B는 방 그림에 문을 그려야 해서 캐릭터·방 디자인이 나온 뒤에. C는 토글로 켜 보시고 마음에 들면 3단계에.</span></div>
+    <div class="ask">확인 질문: 기존 글에 ‘같은 나들이’ 정보를 제가 채워 넣는 것을 허락하시나요? (글 본문은 건드리지 않고 맨 위 정보만 추가)</div>
+  </div>
+
+  <div class="dec"><div class="dh"><span class="mono">D7</span><h3>고양이 캐릭터의 역할</h3></div>
+    <p class="why">캐릭터가 ‘나(방문자)’인지 ‘안내자’인지에 따라 대사와 동작이 달라집니다.</p>
+    <div class="tbl"><table><tbody>
+      <tr><td class="k">a. 방문자 = 고양이</td><td>방문자가 고양이를 조종. 말풍선은 짧은 감탄사·안내.</td><td>조작감이 좋고, 만들 것이 적음.</td></tr>
+      <tr><td class="k">b. 고양이 = 도슨트</td><td>방문자는 보이지 않고, 고양이가 앞장서서 안내하며 설명.</td><td>이야기가 풍부하지만 대사를 글마다 써야 함.</td></tr>
+      <tr><td class="k">c. a + 가끔 도슨트 말풍선</td><td>조종은 a. 액자 앞에 서면 고양이가 한 줄 말함(“이날 라온이가 제일 좋아한 곳”).</td><td>한 줄 대사는 글의 요약을 그대로 쓰면 되어 부담이 적음.</td></tr>
+    </tbody></table></div>
+    <div class="rec-line"><b>추천 c</b><span>캐릭터가 가족 고양이 ‘메시’라면 더욱 자연스럽습니다. 메시가 자기 방(Life with Messi)에 들어가면 캣타워 위로 올라가는 식의 작은 특별 동작 하나만 있어도 기억에 남습니다.</span></div>
+    <div class="ask">확인 질문: 캐릭터가 메시인가요, 별도의 고양이인가요?</div>
+  </div>
+
+  <div class="dec"><div class="dh"><span class="mono">D8</span><h3>만드는 방법 (기술)</h3></div>
+    <p class="why">현재 블로그가 어떤 도구로 만들어졌는지에 따라 답이 달라집니다. 이미지 폴더 경로로 보아 Next.js 같은 웹 프레임워크로 추정합니다.</p>
+    <div class="tbl"><table><tbody>
+      <tr><td class="k">a. 게임 엔진(Phaser 등)</td><td>진짜 게임처럼 캔버스에 그림.</td><td>화려하지만 블로그 코드와 따로 놀고, 글 데이터 연결이 번거로움. 용량 큼.</td></tr>
+      <tr><td class="k">b. 일반 웹 기술(HTML·CSS·JS)</td><td>방은 HTML, 액자는 버튼, 고양이는 작은 캔버스. 프로토타입이 이 방식.</td><td>블로그 글 데이터를 그대로 씀. 접근성·검색 문제 없음. 가볍다.</td></tr>
+    </tbody></table></div>
+    <div class="rec-line"><b>추천 b</b><span>이 계획의 ‘게임’은 이동과 클릭이 전부라 게임 엔진이 필요 없습니다. 방 정보는 JSON 파일 하나, 글 정보는 기존 글 파일에서 자동 생성합니다.</span></div>
+    <div class="ask">확인 질문: 라온로그가 어떤 도구(Next.js, Astro, Hugo 등)로 만들어졌고 어디에 배포되나요? 글은 마크다운 파일인가요?</div>
+  </div>
+</div></section>
+
+<section id="s6"><div class="wrap">
+  <span class="sec-num">06 · 로드맵</span>
+  <h2>결정 뒤의 진행 순서</h2>
+  <p class="sub">기간은 제가 구현을 맡고, 캐릭터·방 그림은 직접 주시는 것을 전제로 한 대략의 감각입니다.</p>
+  <ol class="road">
+    <li><div class="ph">PHASE 0<small>이번 주</small></div><div><b>결정 8건 확정 + 재료 수령</b><p>D1~D8 답변, 고양이 스프라이트, 블로그 소스 접근. 이 단계가 끝나면 나머지는 막힘 없이 갑니다.</p></div></li>
+    <li><div class="ph">PHASE 1<small>1~2주</small></div><div><b>방 하나 실전 프로토타입</b><p>실제 글 6~8편으로 ‘나들이 방’ 하나를 진짜 블로그 안에 만듭니다. 이동, 명판, 확대 창, 이전/다음, 이어 보기(A안)까지. 여기서 느낌을 다시 점검합니다.</p></div></li>
+    <li><div class="ph">PHASE 2<small>2~3주</small></div><div><b>로비 + 5개 방 + 문</b><p>복도(최근 글), 방 5개, 방 사이 연결 문(B안), 방별 소품. 기존 글에 연결 정보 채우기. 모바일 탭 이동.</p></div></li>
+    <li><div class="ph">PHASE 3<small>1~2주</small></div><div><b>사유의 방 · 수장고 · 카페 · 마무리</b><p>대표 글 특별실, 전체 목록·검색, 소개·방명록, 공유 버튼, 30분 추천 코스, 털실 자취(C안, 선택). 접근성·속도 점검.</p></div></li>
+  </ol>
+  <div class="tip"><b>성공을 재는 숫자 하나.</b> “방문자 한 명이 한 번 들어와서 읽는 글 수”를 기준으로 삼기를 제안합니다. 박물관식 구조의 목적이 ‘한 편 더 보게 하기’이기 때문입니다. 지금 수치(기준값)를 알려 주시면 목표를 같이 정하겠습니다. 모르시면 첫 달은 측정만 합니다.</div>
+</div></section>
+
+<section id="s7"><div class="wrap">
+  <span class="sec-num">07 · 필요한 것</span>
+  <h2>보내 주시면 바로 시작되는 것들</h2>
+  <ul class="check">
+    <li><b>고양이 캐릭터 그림</b><small>권장: 32×32 또는 48×48 픽셀, 배경 투명 PNG. 걷기 2~4프레임. 방향 수는 D2 결정에 따름. 앉기·꼬리 흔들기 같은 ‘가만히 있을 때 동작’ 1개가 있으면 훨씬 살아납니다.</small></li>
+    <li><b>블로그 소스 접근</b><small>GitHub 저장소가 있으면 이 세션에 연결해 주시고, 없으면 C:\Projects\Raonlog 폴더 구조와 글 파일 예시 1개를 보여 주세요.</small></li>
+    <li><b>글 목록과 대표 이미지 유무</b><small>글이 몇 편이고, 대표 이미지가 없는 글이 있는지. 없는 글은 첫 사진을 액자로 씁니다.</small></li>
+    <li><b>D1~D8 답변</b><small>“추천대로”도 답입니다.</small></li>
+    <li><b>(선택) 방 분위기 참고 이미지</b><small>없으면 제가 각 방의 벽 색·소품을 제안합니다. 국립중앙박물관 실제 전시실 색(회색 석재, 짙은 나무, 사유의 방의 검은 벽)을 참고할 예정입니다.</small></li>
+  </ul>
+</div></section>
+
+<section id="s8"><div class="wrap">
+  <span class="sec-num">08 · 용어 카드</span>
+  <h2>이 문서에 나온 말 풀이</h2>
+  <div class="terms">
+    <div class="term"><b>스프라이트(sprite)</b><span>게임 캐릭터 그림 한 장. 걷는 동작은 여러 장을 빠르게 바꿔 보여 줍니다. 그래서 ‘프레임 수’를 묻습니다.</span></div>
+    <div class="term"><b>3/4 시점</b><span>위에서 비스듬히 내려다본 화면. 뒷벽과 바닥이 같이 보여 ‘방’처럼 느껴집니다.</span></div>
+    <div class="term"><b>명판(plaque)</b><span>박물관 유물 옆 작은 설명판. 여기서는 액자 아래의 제목·날짜·한 줄 요약.</span></div>
+    <div class="term"><b>프런트매터(front matter)</b><span>글 파일 맨 위에 적는 정보 칸(제목, 날짜, 태그 등). 본문이 아니라 ‘꼬리표’입니다.</span></div>
+    <div class="term"><b>박물관 피로</b><span>관람 30~45분이 지나면 집중이 떨어지는 현상. ‘한 방에 액자를 적게’의 근거.</span></div>
+    <div class="term"><b>수장고</b><span>박물관이 전시하지 않는 소장품을 보관하는 창고. 여기서는 ‘게임 없이 보는 전체 글 목록’.</span></div>
+    <div class="term"><b>접근성</b><span>키보드만 쓰는 사람, 화면 읽어 주는 프로그램을 쓰는 사람도 쓸 수 있게 만드는 것. 액자를 ‘버튼’으로 만드는 이유.</span></div>
+    <div class="term"><b>검색 유입(SEO)</b><span>구글이 글을 읽고 검색 결과에 띄우는 것. 글이 게임 안에만 있으면 구글이 못 읽습니다.</span></div>
+  </div>
+</div></section>
+
+<section id="s9"><div class="wrap">
+  <span class="sec-num">09 · 근거와 한계</span>
+  <h2>직접 확인해 주시면 좋은 근거 5개</h2>
+  <p class="sub">이 세션에서는 외부 사이트 접근이 차단되어 링크를 직접 열어 검증하지 못했습니다. 아래 5개만 확인하시면 1장의 분석이 서 있는 땅을 확인하실 수 있습니다.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>주장</th><th>어디서 확인</th><th>문서에서의 역할</th></tr></thead>
+    <tbody>
+      <tr><td>국립중앙박물관은 1시간·2시간 등 <b>추천 관람 코스</b>를 안내한다</td><td>museum.go.kr → 관람 안내 → 추천 동선(또는 층별 안내)</td><td>패턴 1 → ‘30분 코스’ 제안의 근거</td></tr>
+      <tr><td>1층 중앙에 <b>‘역사의 길’</b>이 있고 전시실이 양옆으로 이어진다</td><td>museum.go.kr 층별 안내도, 방문 시 실제 확인</td><td>패턴 2 → 로비 복도 구조의 근거</td></tr>
+      <tr><td><b>‘사유의 방’</b>은 반가사유상 두 점만 전시하는 어두운 방이다</td><td>museum.go.kr 상설전시 → 사유의 방 소개</td><td>패턴 3 → 대표 글 특별실의 근거</td></tr>
+      <tr><td>관람객 후기에서 <b>“너무 넓다·피곤하다”</b>와 <b>“사유의 방이 최고”</b>가 반복된다</td><td>트립어드바이저·구글 리뷰 상위 후기 20개 정도 훑어보기</td><td>패턴 1·3의 ‘여러 사람 의견’ 부분</td></tr>
+      <tr><td>관람 30~45분 후 집중이 떨어진다(박물관 피로)</td><td>“museum fatigue Bitgood” 검색 → 관람 행동 연구 요약</td><td>방당 액자 6~8개 제한의 근거</td></tr>
+    </tbody>
+  </table></div>
+  <p style="font-size:14px;color:var(--ink-2)">확인 중 다른 사실이 나오면(예: 추천 코스가 없다) 알려 주세요. 해당 패턴의 결론이 어떻게 바뀌는지 바로 반영하겠습니다. 나머지 내용은 조사가 아니라 설계 제안이라 검증 대상이 아닙니다.</p>
+</div></section>
+
+<footer><div class="wrap">라온로그 박물관 계획안 v0.1 · 예시 글과 이미지는 모두 가상이며 실제 블로그 글로 교체됩니다.</div></footer>
+
+<script>
+(function(){
+  // ---------- data (examples in Raonlog style) ----------
+  const ROOMS = [
+    {id:'parenting', kr:'라온이의 방', en:'KOREAN PARENTING', posts:[
+      {id:'p1', title:"Raon's First Day at a Korean Kindergarten", date:'2026-03-02', summary:"라온이의 유치원 첫날. 한국 유치원의 등원 풍경과, 문 앞에서 손을 놓지 못하던 아빠 이야기.", trip:null, place:'동네 유치원', people:['raon'], tags:['kindergarten','spring'], art:'sky'},
+      {id:'p2', title:"Why Korean Kids Start Taekwondo at Six", date:'2026-05-14', summary:"태권도장 버스, 띠 색깔, 그리고 라온이가 처음 ‘차렷’을 배운 날.", trip:null, place:'태권도장', people:['raon'], tags:['taekwondo'], art:'dojang'},
+      {id:'p3', title:"What Raon Asked at the Museum", date:'2026-09-05', summary:"박물관에서 라온이가 던진 질문 열 개. ‘왜 부처님은 반쯤 웃어?’", trip:'2026-09-05-museum', place:'국립중앙박물관', people:['raon'], tags:['museum','questions'], art:'museum'},
+      {id:'p4', title:"Screen Time Rules in Our Home", date:'2026-06-20', summary:"주말 30분 규칙과 그것이 무너진 비 오는 날의 기록.", trip:null, place:'집', people:['raon'], tags:['home'], art:'home'},
+    ]},
+    {id:'adventure', kr:'나들이 방', en:'FAMILY ADVENTURES', posts:[
+      {id:'a1', title:"A Rainy Saturday at the National Museum of Korea", date:'2026-09-05', summary:"비 오는 토요일, 역사의 길을 따라 걷다 사유의 방에서 멈춘 이야기. 동선과 시간표 포함.", trip:'2026-09-05-museum', place:'국립중앙박물관', people:['raon','shun'], tags:['museum','rain'], art:'museum'},
+      {id:'a2', title:"Han River Picnic with a Seven-Year-Old", date:'2026-05-03', summary:"돗자리, 김밥, 그리고 라온이가 처음 자전거를 탄 잔디밭.", trip:'2026-05-03-hangang', place:'한강공원', people:['raon','shun'], tags:['picnic','spring'], art:'river'},
+      {id:'a3', title:"Namsan Cable Car at Dusk", date:'2026-04-12', summary:"해 질 무렵 케이블카, 서울타워 아래에서 본 도시의 불빛.", trip:null, place:'남산', people:['raon'], tags:['night'], art:'city'},
+      {id:'a4', title:"Bukhansan with Kids: The Easy Trail", date:'2026-07-19', summary:"7살과 오를 수 있는 북한산 코스. 두 시간, 간식 세 번.", trip:'2026-07-19-bukhansan', place:'북한산', people:['raon','shun'], tags:['hiking','summer'], art:'mountain'},
+      {id:'a5', title:"Children's Museum Reservation Guide", date:'2026-09-06', summary:"국립중앙박물관 어린이박물관 예약하는 법과 시간대별 혼잡도.", trip:null, place:'국립중앙박물관', people:['raon'], tags:['museum','guide'], art:'museum'},
+    ]},
+    {id:'food', kr:'맛집 방', en:'FOOD & DINING', posts:[
+      {id:'f1', title:"Kalguksu After the Museum", date:'2026-09-05', summary:"박물관 나와서 먹은 뜨끈한 칼국수 한 그릇. 비 오는 날의 정답.", trip:'2026-09-05-museum', place:'용산 칼국수집', people:['raon','shun'], tags:['noodles','rain'], art:'noodle'},
+      {id:'f2', title:"Poplo Pizza: Our Friday Ritual", date:'2026-05-03', summary:"한강 피크닉 끝나고 들른 포플로피자. 금요일 저녁의 루틴이 된 이유.", trip:'2026-05-03-hangang', place:'포플로피자', people:['raon','shun'], tags:['pizza'], art:'pizza'},
+      {id:'f3', title:"Meister Makguksu, Summer Edition", date:'2026-07-19', summary:"북한산 하산 후 막국수. 메밀 향과 얼음 육수.", trip:'2026-07-19-bukhansan', place:'마이스터막국수', people:['raon'], tags:['noodles','summer'], art:'noodle'},
+      {id:'f4', title:"Gogi Village Sook: Sunday Barbecue", date:'2026-06-07', summary:"고기마을숙의 일요일 저녁. 라온이가 상추쌈을 처음 성공한 날.", trip:null, place:'고기마을숙', people:['raon','shun'], tags:['bbq'], art:'bbq'},
+    ]},
+    {id:'health', kr:'건강 방', en:'HEALTH & WELLNESS', posts:[
+      {id:'h1', title:"Dad's 10,000 Steps Challenge, Month One", date:'2026-08-01', summary:"51세 영업사원의 만 보 걷기 한 달. 박물관 관람이 만 보였다는 발견.", trip:null, place:'동네', people:['dad'], tags:['walking'], art:'steps'},
+      {id:'h2', title:"Hiking as Family Therapy", date:'2026-07-20', summary:"북한산에서 배운 것: 아이 속도로 걸으면 모두가 덜 지친다.", trip:'2026-07-19-bukhansan', place:'북한산', people:['raon','shun','dad'], tags:['hiking'], art:'mountain'},
+      {id:'h3', title:"Korean Pharmacy Basics for Parents", date:'2026-02-11', summary:"약국에서 쓰는 한국어 다섯 마디와 해열제 이야기.", trip:null, place:'약국', people:['raon'], tags:['guide'], art:'home'},
+    ]},
+    {id:'messi', kr:'메시의 방', en:'LIFE WITH MESSI', posts:[
+      {id:'m1', title:"Messi Meets the Museum Cat Plushie", date:'2026-09-06', summary:"박물관 기념품점에서 사 온 고양이 인형과 메시의 첫 대면.", trip:'2026-09-05-museum', place:'집', people:['messi','raon'], tags:['museum','toys'], art:'cat'},
+      {id:'m2', title:"Messi's First Vet Visit", date:'2026-04-02', summary:"이동장 안의 침묵, 대기실의 강아지들, 그리고 집에 와서의 복수.", trip:null, place:'동물병원', people:['messi'], tags:['vet'], art:'cat'},
+      {id:'m3', title:"The Cat Grass Experiment", date:'2026-06-15', summary:"라온이와 메시가 함께 키운(그리고 함께 망친) 캣그라스.", trip:null, place:'집', people:['messi','raon'], tags:['home'], art:'grass'},
+    ]},
+  ];
+  const ALL = {}; ROOMS.forEach(r=>r.posts.forEach(p=>{p.room=r.id; ALL[p.id]=p;}));
+  const ART = {
+    sky:['#8EC5E8','#5F9ED1','#F2E6B8'], dojang:['#C9A26B','#7A4F2A','#F3ECDD'], museum:['#7B7D80','#3D3F42','#D9B663'], home:['#E7C3A0','#9C6B4A','#F7E9D0'],
+    river:['#8FC7A9','#3E8B6B','#A9D6EA'], city:['#2B2A4C','#1B1A33','#F2D28A'], mountain:['#7FA86A','#3F6B3B','#C8E0F0'], noodle:['#E6D2A8','#B5883F','#F5F0E4'],
+    pizza:['#E8B26B','#B33F2E','#F3E3B0'], bbq:['#8B3D2C','#4A2418','#E7C3A0'], steps:['#B7D7B0','#5F8F5A','#F2F1EC'], cat:['#E8D5B5','#8A6A3B','#F5F0E4'], grass:['#A8D57C','#5C9A3E','#F5F0E4']
+  };
+  function artCSS(k){const c=ART[k]||ART.home;return `background:
+    radial-gradient(circle at 70% 25%, ${c[2]} 0 9%, transparent 10%),
+    linear-gradient(180deg, ${c[0]} 0 55%, ${c[1]} 55% 100%);`}
+
+  // ---------- state ----------
+  const stage=document.getElementById('stage'), framesEl=document.getElementById('frames'), catEl=document.getElementById('cat'), ctx=catEl.getContext('2d');
+  const trail=document.getElementById('trail'), tctx=trail.getContext('2d');
+  const hud=document.getElementById('hud'), bubble=document.getElementById('bubble'), tabs=document.getElementById('tabs');
+  const doorL=document.getElementById('doorL'), doorR=document.getElementById('doorR'), spot=document.getElementById('spot');
+  const viewer=document.getElementById('viewer');
+  let roomIdx=1, cat={x:0.5,y:0.8,dir:1,step:0,moving:false}, target=null, keys={}, seen=new Set(), path=[], yarn=false, current=null;
+
+  // ---------- pixel cat (placeholder, replaced by the user's design) ----------
+  const PAL={k:'#2B2622',o:'#E9A24B',w:'#FFF6E8',p:'#E88080',e:'#2B2622',s:'#C97F2F'};
+  const A=[
+    '....kk....kk....','...kwok..kowk...','...kooookoook...','..koooooooook...','..koeoooooeok...','..koooowpooook..','..kooooooooook..','...kooooooook...',
+    '..kkooooooookkk.','.koooooooooooosk','.koooosooooooosk','.koooooooooooosk','..koooooooookk..','..kkoookkkook...','...ko.....ko....','...kk.....kk....'];
+  const B=A.slice(0,13).concat(['..kkookkkkook...','..ko.......ko...','..kk.......kk...']);
+  function drawCat(){
+    const f=(cat.moving && cat.step%2)?B:A; ctx.clearRect(0,0,16,16);
+    for(let y=0;y<16;y++)for(let x=0;x<16;x++){const ch=f[y][x]; if(ch==='.')continue; ctx.fillStyle=PAL[ch]||PAL.o; const px=cat.dir<0?15-x:x; ctx.fillRect(px,y,1,1);}
+  }
+
+  // ---------- layout ----------
+  function room(){return ROOMS[roomIdx];}
+  function buildTabs(){tabs.innerHTML='';ROOMS.forEach((r,i)=>{const b=document.createElement('button');b.textContent=r.kr;b.setAttribute('role','tab');b.setAttribute('aria-pressed',String(i===roomIdx));b.onclick=()=>enterRoom(i,0.5);tabs.appendChild(b);});}
+  function buildFrames(){
+    framesEl.innerHTML=''; const ps=room().posts, n=ps.length;
+    ps.forEach((p,i)=>{const b=document.createElement('button');b.className='frame'+(seen.has(p.id)?' seen':'');b.dataset.id=p.id;
+      const left=14+ (72*(i+0.5)/n); b.style.left=left+'%'; p._x=left/100;
+      b.innerHTML=`<div class="mat"><div class="art" style="${artCSS(p.art)}"></div></div><div class="plaque">${p.title}<small>${p.date} · ${room().en}</small></div>`;
+      b.setAttribute('aria-label',p.title+' 열기'); b.onclick=(e)=>{e.stopPropagation(); walkTo(p._x,0.66,()=>openPost(p.id));};
+      framesEl.appendChild(b);});
+    const L=ROOMS[(roomIdx+ROOMS.length-1)%ROOMS.length], R=ROOMS[(roomIdx+1)%ROOMS.length];
+    doorL.querySelector('span').textContent='← '+L.kr; doorR.querySelector('span').textContent=R.kr+' →';
+    doorL.setAttribute('aria-label',L.kr+'으로 이동'); doorR.setAttribute('aria-label',R.kr+'으로 이동');
+  }
+  function enterRoom(i,x){roomIdx=(i+ROOMS.length)%ROOMS.length; cat.x=x; cat.y=0.8; target=null; path=[]; clearTrail(); buildTabs(); buildFrames(); say(room().kr+'에 들어왔어요'); render();}
+  function clearTrail(){tctx.clearRect(0,0,trail.width,trail.height);}
+  function resizeTrail(){trail.width=stage.clientWidth; trail.height=stage.clientHeight; redrawTrail();}
+  function redrawTrail(){clearTrail(); if(!yarn||path.length<2)return; tctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--yarn').trim()||'#D95F5F'; tctx.lineWidth=2; tctx.setLineDash([6,5]); tctx.beginPath();
+    path.forEach((pt,i)=>{const X=pt.x*trail.width,Y=pt.y*trail.height; i?tctx.lineTo(X,Y):tctx.moveTo(X,Y);}); tctx.stroke();
+    const s=path[0]; tctx.setLineDash([]); tctx.fillStyle=tctx.strokeStyle; tctx.beginPath(); tctx.arc(s.x*trail.width,s.y*trail.height,5,0,7); tctx.fill();}
+
+  // ---------- proximity ----------
+  function nearFrame(){if(cat.y>0.78)return null; let best=null,bd=1; room().posts.forEach(p=>{const d=Math.abs(p._x-cat.x); if(d<0.055&&d<bd){bd=d;best=p;}}); return best;}
+  function nearDoor(){if(cat.x<0.11)return 'L'; if(cat.x>0.89)return 'R'; return null;}
+
+  // ---------- render ----------
+  function render(){
+    const W=stage.clientWidth,H=stage.clientHeight;
+    catEl.style.left=(cat.x*W)+'px'; catEl.style.top=(cat.y*H)+'px'; drawCat();
+    const nf=nearFrame(), nd=nearDoor();
+    framesEl.querySelectorAll('.frame').forEach(f=>f.classList.toggle('near',!!nf&&f.dataset.id===nf.id));
+    doorL.classList.toggle('near',nd==='L'); doorR.classList.toggle('near',nd==='R');
+    hud.innerHTML=`<b>ROOM ${String(roomIdx+1).padStart(2,'0')}</b> ${room().en}<br>SEEN ${seen.size}/${Object.keys(ALL).length}`;
+    spot.style.left=(cat.x*W-130)+'px';
+    bubble.style.left=(cat.x*W)+'px'; bubble.style.top=(cat.y*H-52)+'px';
+  }
+  let sayT; function say(t){bubble.textContent=t; bubble.classList.add('on'); clearTimeout(sayT); sayT=setTimeout(()=>bubble.classList.remove('on'),1600);}
+
+  // ---------- movement ----------
+  function walkTo(x,y,cb){target={x:Math.min(.97,Math.max(.03,x)),y:Math.min(.97,Math.max(.6,y)),cb};}
+  let last=0, acc=0;
+  function loop(ts){
+    const dt=Math.min(40,ts-last); last=ts; let vx=0,vy=0; const sp=0.00045*dt;
+    if(keys.left)vx-=sp; if(keys.right)vx+=sp; if(keys.up)vy-=sp*1.2; if(keys.down)vy+=sp*1.2;
+    if(vx||vy){target=null;}
+    else if(target){const dx=target.x-cat.x,dy=target.y-cat.y,d=Math.hypot(dx,dy); if(d<0.008){cat.x=target.x;cat.y=target.y;const cb=target.cb;target=null;cb&&cb();} else {vx=dx/d*sp;vy=dy/d*sp;}}
+    const moving=!!(vx||vy);
+    if(moving){cat.x=Math.min(.97,Math.max(.03,cat.x+vx)); cat.y=Math.min(.97,Math.max(.6,cat.y+vy)); if(vx)cat.dir=vx<0?-1:1; acc+=dt; if(acc>110){acc=0;cat.step++;}
+      if(yarn){const lp=path[path.length-1]; if(!lp||Math.hypot(lp.x-cat.x,lp.y-cat.y)>0.02){path.push({x:cat.x,y:cat.y}); redrawTrail();}}}
+    if(moving!==cat.moving||moving){cat.moving=moving; render();}
+    requestAnimationFrame(loop);
+  }
+  function act(){ if(viewer.classList.contains('on'))return; const nf=nearFrame(); if(nf){openPost(nf.id);return;} const nd=nearDoor(); if(nd==='L'){enterRoom(roomIdx-1,0.9);return;} if(nd==='R'){enterRoom(roomIdx+1,0.1);return;} say('액자나 문 가까이 가 보세요'); }
+
+  const KM={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',a:'left',d:'right',w:'up',s:'down'};
+  stage.addEventListener('keydown',e=>{ if(viewer.classList.contains('on')){ if(e.key==='Escape')closePost(); if(e.key==='ArrowLeft')navPost(-1); if(e.key==='ArrowRight')navPost(1); e.preventDefault(); return;}
+    const k=KM[e.key]; if(k){keys[k]=true;e.preventDefault();} if(e.key==='Enter'||e.key===' '){act();e.preventDefault();} });
+  stage.addEventListener('keyup',e=>{const k=KM[e.key]; if(k)keys[k]=false;});
+  stage.addEventListener('click',e=>{ if(viewer.classList.contains('on'))return; stage.focus(); const r=stage.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height; if(y<0.56){walkTo(x,0.66);} else walkTo(x,y); });
+  doorL.addEventListener('click',e=>{e.stopPropagation(); walkTo(0.06,0.7,()=>enterRoom(roomIdx-1,0.9));});
+  doorR.addEventListener('click',e=>{e.stopPropagation(); walkTo(0.94,0.7,()=>enterRoom(roomIdx+1,0.1));});
+  document.querySelectorAll('.ctl .pad button').forEach(b=>{const k=b.dataset.k; const on=e=>{e.preventDefault();keys[k]=true;stage.focus();}, off=()=>{keys[k]=false;};
+    b.addEventListener('pointerdown',on); b.addEventListener('pointerup',off); b.addEventListener('pointerleave',off); b.addEventListener('pointercancel',off);});
+  document.getElementById('btnAct').addEventListener('click',()=>{stage.focus();act();});
+  document.getElementById('yarnToggle').addEventListener('change',e=>{yarn=e.target.checked; if(yarn){path=[{x:cat.x,y:cat.y}];} redrawTrail();});
+  document.getElementById('darkToggle').addEventListener('change',e=>{stage.dataset.dark=e.target.checked?'1':'0';});
+
+  // ---------- viewer ----------
+  const REL_LABEL={trip:'같은 나들이',place:'같은 장소',people:'같은 등장인물',tags:'같은 주제'};
+  function related(p){const out=[]; Object.values(ALL).forEach(q=>{if(q.id===p.id)return; let why=null;
+    if(p.trip&&q.trip===p.trip)why='trip'; else if(q.place===p.place)why='place'; else if(q.people.some(x=>p.people.includes(x))&&q.tags.some(x=>p.tags.includes(x)))why='tags'; else if(q.people.length===1&&p.people.length===1&&q.people[0]===p.people[0])why='people';
+    if(why)out.push({q,why});}); const order={trip:0,place:1,tags:2,people:3}; return out.sort((a,b)=>order[a.why]-order[b.why]).slice(0,3);}
+  function openPost(id){const p=ALL[id]; current=p; seen.add(id); const fr=framesEl.querySelector(`[data-id="${id}"]`); if(fr)fr.classList.add('seen');
+    document.getElementById('vImg').style.cssText=artCSS(p.art); document.getElementById('vTitle').textContent=p.title;
+    const rm=ROOMS.find(r=>r.id===p.room); document.getElementById('vMeta').innerHTML=`<span>${p.date}</span><span>${rm.kr} · ${rm.en}</span><span>${p.place}</span>`;
+    document.getElementById('vSummary').textContent=p.summary;
+    const rel=document.getElementById('vRel'); rel.innerHTML=''; const rs=related(p);
+    if(!rs.length){rel.innerHTML='<div style="font-size:13px;color:#B8AE9B">연결된 글이 아직 없습니다.</div>';}
+    rs.forEach(({q,why})=>{const b=document.createElement('button'); const qr=ROOMS.find(r=>r.id===q.room); b.innerHTML=`<span>${q.title}<br><span style="font-size:11px;color:#B8AE9B">${qr.kr}</span></span><em>${REL_LABEL[why]}</em>`; b.onclick=()=>jumpTo(q.id); rel.appendChild(b);});
+    viewer.classList.add('on'); render(); document.getElementById('vClose').focus();
+    say(p.people.includes('raon')?'라온이가 여기 제일 오래 있었어요':'여기 보세요');}
+  function closePost(){viewer.classList.remove('on'); stage.focus();}
+  function navPost(d){const ps=room().posts; const i=ps.findIndex(p=>p.id===current.id); const n=ps[(i+d+ps.length)%ps.length]; cat.x=n._x; cat.y=0.66; openPost(n.id);}
+  function jumpTo(id){const q=ALL[id]; const ri=ROOMS.findIndex(r=>r.id===q.room); if(ri!==roomIdx){viewer.classList.remove('on'); enterRoom(ri,0.5); const p=ALL[id]; say('연결 문으로 건너뛰었어요'); walkTo(p._x,0.66,()=>openPost(id));} else {cat.x=q._x; cat.y=0.66; openPost(id);} }
+  document.getElementById('vClose').onclick=closePost; document.getElementById('vPrev').onclick=()=>navPost(-1); document.getElementById('vNext').onclick=()=>navPost(1);
+  document.getElementById('vRead').onclick=()=>{say('실제 블로그에서는 여기서 글 페이지로 이동'); closePost();};
+
+  // ---------- boot ----------
+  buildTabs(); buildFrames(); resizeTrail(); render(); window.addEventListener('resize',()=>{resizeTrail();render();}); requestAnimationFrame(t=>{last=t;loop(t);});
+})();
+</script>
