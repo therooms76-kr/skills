@@ -1,131 +1,94 @@
-# 메시 도슨트 루틴이 매주 읽는 통로 목록 (초안 v0.1)
+# 메시 학예사 루틴이 매주 읽는 '문법 출처' 목록 (초안 v0.2)
+# v0.2: 여기서 가져오는 것은 소식의 내용이 아니라 형식과 말투다. 글의 내용은 가족 아카이브에서만 나온다.
 # 한 줄 추가/삭제로 박물관을 넣고 뺀다. 순서 = 읽는 순서.
-# access: api(키 필요 여부 명시) | page(웹 페이지) | rss
-# use: 어떤 콘텐츠 형식의 재료인지 (this_week | object | calendar | loan | news)
+# access: api | page | rss
+# learn: 이 통로에서 배우는 형식
+#   curators_pick | label | special_exhibition | object_of_month | quiet_room | conservation |
+#   acquisition | docent_talk | family_guide | vault | whats_on | related_elsewhere
 
-nmk:
-  name: 국립중앙박물관
-  sources:
-    - id: nmk_exhibitions_api
-      access: api
-      key: data.go.kr (공공데이터포털, 무료 발급)
-      url: https://www.data.go.kr/data/15105037/openapi.do
-      note: 문화체육관광부 12개 기관 전시정보. 전시실/전시소식. 1순위 원천.
-      use: [this_week]
-    - id: nmk_press
-      access: page
-      url: https://www.museum.go.kr/MUSEUM/contents/M0701040000.do
-      note: 보도자료 목록. 주 1~3건. 제목/날짜/링크만.
-      use: [this_week, news]
-    - id: nmk_notice
-      access: page
-      url: https://www.museum.go.kr/MUSEUM/contents/M0701010000.do?catCustomType=united&catId=128
-      note: 알림(휴실, 운영시간 변경). this_week의 Heads-up 항목.
-      use: [this_week]
-    - id: nmk_special_current
-      access: page
-      url: https://www.museum.go.kr/MUSEUM/contents/M0202010000.do?menuId=current
-      note: 특별전 현재. API 실패 시 대체.
-      use: [this_week]
-    - id: nmk_curator_talk
-      access: page
-      url: https://www.museum.go.kr/MUSEUM/contents/M0102030000.do
-      note: 큐레이터와의 대화. 매주 수요일 18:00/19:00. 회차 주제와 장소.
-      use: [this_week]
-    - id: nmk_webzine
-      access: page
-      url: https://webzine.museum.go.kr/sub_news/news_list.html
-      note: 박물관신문 월간. 매월 첫 실행 때만 읽는다.
-      use: [object, this_week]
-    - id: nmk_curator_picks
-      access: page
-      url: https://www.museum.go.kr/MUSEUM/contents/M0501000000.do
-      note: 큐레이터 추천 소장품 321건. 주 1점 선택. 이미지는 링크만(공공누리 확인 전).
-      use: [object]
-    - id: nmk_modu
-      access: page
-      url: https://modu.museum.go.kr/learn
-      note: 교육플랫폼 모두. 유아/초등 가족 프로그램, 접수 기간. 매월 첫 실행 때.
-      use: [calendar]
-    - id: nmk_children_reserve
-      access: page
-      url: https://www.museum.go.kr/MUSEUM/contents/M0104010000.do?schM=child&act=intro
-      note: 어린이박물관 예약 안내. 오픈 규칙만 읽고 잔여석은 읽지 않는다.
-      use: [calendar]
-    - id: nmk_events
-      access: page
-      url: https://www.museum.go.kr/MUSEUM/contents/M0403000000.do
-      note: 문화행사(공연, 영화).
-      use: [this_week, calendar]
+family_archive:
+  # 글의 유일한 재료. 라온로그 저장소가 연결되면 경로를 맞춘다.
+  posts: content/
+  images: public/images/
+  collection_index: agent/collection.json     # 소장품 목록 (루틴이 생성·갱신)
+  exhibitions_out: agent/exhibitions.json     # 게임이 읽는 배치 파일 (루틴이 생성·갱신)
+  style_library: agent/style-library.md       # 문법 사전 (루틴이 한 줄씩 추가)
 
-overseas:
-  - id: met
-    name: The Metropolitan Museum of Art
-    access: api
-    key: none
-    url: https://collectionapi.metmuseum.org/public/collection/v1/
-    license: CC0 (isPublicDomain=true 항목만)
-    query: department=Asian Art, q=Korea, hasImages=true
-    use: [loan, object]
-  - id: cma
-    name: Cleveland Museum of Art
-    access: api
-    key: none
-    url: https://openaccess-api.clevelandart.org/api/artworks/
-    license: CC0 (share_license_status=CC0 항목만)
-    query: q=Korea, has_image=1
-    use: [loan, object]
-  - id: artic
-    name: Art Institute of Chicago
-    access: api
-    key: none
-    url: https://api.artic.edu/api/v1/artworks/search
-    license: CC0 (is_public_domain=true 항목만)
-    query: q=korean
-    use: [loan]
-  # ---- E3에서 c를 고르면 켠다 ----
-  - id: rijks
-    name: Rijksmuseum
-    access: api
-    key: data.rijksmuseum.nl 발급
-    url: https://data.rijksmuseum.nl/
-    license: 대부분 CC0
-    enabled: false
-    use: [news, loan]
-  - id: si
-    name: Smithsonian Open Access (국립아시아예술박물관 포함)
-    access: api
-    key: api.data.gov 무료 발급
-    url: https://api.si.edu/openaccess/api/v1.0/
-    license: CC0
-    enabled: false
-    use: [object, loan]
-  - id: bm_blog
-    name: British Museum blog
-    access: rss
-    url: https://www.britishmuseum.org/articles/blog/feed
-    license: 이미지 CC BY-NC-SA. 소식 텍스트만 요약.
-    enabled: false
-    use: [news]
+style_sources:
+  nmk:
+    name: 국립중앙박물관
+    sources:
+      - id: nmk_curator_picks
+        access: page
+        url: https://www.museum.go.kr/MUSEUM/contents/M0501000000.do
+        learn: [curators_pick, label]
+        note: 큐레이터 추천 소장품. "왜 이것을 골랐는지"의 구조를 배운다.
+      - id: nmk_webzine
+        access: page
+        url: https://webzine.museum.go.kr/sub_news/news_list.html
+        learn: [object_of_month, whats_on]
+        note: 박물관신문(월간). 매월 첫 월요일에만 읽는다.
+      - id: nmk_press
+        access: page
+        url: https://www.museum.go.kr/MUSEUM/contents/M0701040000.do
+        learn: [special_exhibition, acquisition]
+        note: 보도자료. 개막문과 신소장품 공개문의 구조.
+      - id: nmk_curator_talk
+        access: page
+        url: https://www.museum.go.kr/MUSEUM/contents/M0102030000.do
+        learn: [docent_talk]
+        note: 큐레이터와의 대화. 요일·시간이 정해진 문답 형식.
+      - id: nmk_special_current
+        access: page
+        url: https://www.museum.go.kr/MUSEUM/contents/M0202010000.do?menuId=current
+        learn: [related_elsewhere]
+        note: 우리 글과 닮은 전시가 있으면 각주 한 줄용. 본문에는 쓰지 않는다.
+      - id: nmk_modu
+        access: page
+        url: https://modu.museum.go.kr/learn
+        learn: [family_guide]
+        note: 교육플랫폼 모두. 가족 프로그램의 활동 설계 방식.
 
-# E1 Custom 허용 목록에 넣을 도메인 (위 통로에서 뽑음)
+  overseas:
+    - id: met_family
+      name: The Met · Kids & Families / Family Guides
+      access: page
+      url: https://www.metmuseum.org/learn/kids-and-families/family-guides
+      learn: [family_guide]
+      note: "이 그림에서 찾아보세요" 식 활동지 문법. E3 b에서 켠다.
+    - id: met_perspectives
+      name: The Met · Perspectives
+      access: page
+      url: https://www.metmuseum.org/perspectives
+      learn: [curators_pick, conservation]
+      note: 큐레이터·보존가의 1인칭 글.
+    - id: bm_blog
+      name: British Museum blog
+      access: rss
+      url: https://www.britishmuseum.org/articles/blog/feed
+      learn: [conservation, vault]
+      note: 보존 처리, 수장고 이야기의 구조.
+    # ---- E3 c에서 켠다 ----
+    - id: rijks_stories
+      name: Rijksmuseum · Stories
+      access: page
+      url: https://www.rijksmuseum.nl/en/stories
+      learn: [object_of_month]
+      enabled: false
+    - id: si_magazine
+      name: Smithsonian Magazine · At the Smithsonian
+      access: rss
+      url: https://www.smithsonianmag.com/rss/
+      learn: [whats_on]
+      enabled: false
+
+# E1 Custom 허용 목록에 넣을 도메인 (위 통로에서 뽑음). API·이미지 도메인은 더 이상 필요 없다.
 allowlist:
   - www.museum.go.kr
   - webzine.museum.go.kr
   - modu.museum.go.kr
-  - www.emuseum.go.kr
-  - apis.data.go.kr
-  - www.data.go.kr
-  - collectionapi.metmuseum.org
-  - images.metmuseum.org
-  - openaccess-api.clevelandart.org
-  - openaccess-cdn.clevelandart.org
-  - api.artic.edu
-  - www.artic.edu
-  # E3 c 선택 시
-  - data.rijksmuseum.nl
-  - api.si.edu
+  - www.metmuseum.org
   - www.britishmuseum.org
-  # 의견 재조사용 (선택)
-  - www.reddit.com
-  - old.reddit.com
+  # E3 c 선택 시
+  - www.rijksmuseum.nl
+  - www.smithsonianmag.com
