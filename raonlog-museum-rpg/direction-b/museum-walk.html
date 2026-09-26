@@ -1,0 +1,301 @@
+<title>라온로그 박물관 관람 동선</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#EEF0EB; --paper:#F7F8F4; --ink:#1E2320; --ink-2:#4A524D; --ink-3:#7A827C; --line:#D5DAD3; --line-2:#C2C9C1;
+  --teal:#1E7A72; --teal-soft:#DCEFEC; --bronze:#8A6A3B;
+  /* museum materials */
+  --granite:#B9B6AE; --granite-2:#A5A198; --granite-3:#8F8B82; --stone:#D9D4C8; --stone-2:#C4BEB0; --hall:#3B3C3A; --hall-2:#2E2F2D; --hall-floor:#5B5852; --hall-floor-2:#4A4842;
+  --label:#F4F1EA; --label-ink:#2B2B29; --spot:rgba(255,241,214,.55); --glass:rgba(255,255,255,.10);
+  --shadow:0 1px 2px rgba(30,35,32,.08), 0 8px 24px rgba(30,35,32,.06);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ground:#181B19;--paper:#20241F;--ink:#E8E6DF;--ink-2:#BDBBB2;--ink-3:#8C8A82;--line:#333833;--line-2:#444A44;--teal:#5FC2B7;--teal-soft:#1D3532;--bronze:#C9A263;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3)}}
+:root[data-theme="dark"]{--ground:#181B19;--paper:#20241F;--ink:#E8E6DF;--ink-2:#BDBBB2;--ink-3:#8C8A82;--line:#333833;--line-2:#444A44;--teal:#5FC2B7;--teal-soft:#1D3532;--bronze:#C9A263;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3)}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:"IBM Plex Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Gowun Batang",Georgia,serif;margin:0;line-height:1.3;text-wrap:balance}
+p{margin:0 0 12px}
+.wide{max-width:1040px;margin:0 auto;padding:0 16px}
+header{padding:28px 0 12px}
+header .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--bronze);font-weight:600}
+header h1{font-size:clamp(24px,4vw,34px);margin-top:8px}
+header p{color:var(--ink-2);font-size:15px;max-width:68ch;margin-top:8px}
+.proto{background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;margin:12px 0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:12px;color:var(--ink-2);flex-wrap:wrap}
+.top .crumb b{color:var(--ink)}
+.top button{font:inherit;font-size:12px;padding:5px 10px;border-radius:6px;border:1px solid var(--line-2);background:transparent;color:var(--ink-2);cursor:pointer}
+.stage{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;user-select:none;background:#000;touch-action:manipulation}
+.scene{position:absolute;inset:0;display:none}
+.scene.on{display:block}
+/* ---------- corridor: 역사의 길 ---------- */
+.corr .bg{position:absolute;inset:0}
+.corr .doors{position:absolute;inset:0}
+.door{position:absolute;bottom:34%;width:9%;height:34%;border:0;padding:0;cursor:pointer;background:linear-gradient(180deg,#1D1E1C,#2A2B29);box-shadow:inset 0 0 0 2px #6E6A62,inset 0 0 40px rgba(0,0,0,.8);transform:translateX(-50%)}
+.door::before{content:"";position:absolute;left:8%;right:8%;top:6%;height:14%;background:#2B2B29;border:1px solid #8C877D}
+.door .sign{position:absolute;left:50%;top:-30px;transform:translateX(-50%);white-space:nowrap;background:#2B2B29;color:#F4F1EA;font-size:9px;letter-spacing:.04em;padding:3px 6px;border-left:3px solid var(--bronze)}
+.door .sign small{display:block;font-size:7px;color:#C9C3B6;letter-spacing:.06em}
+.door.near{box-shadow:inset 0 0 0 2px #F2D28A,inset 0 0 40px rgba(0,0,0,.6),0 0 0 3px rgba(242,210,138,.35)}
+.door.quiet{background:#050505;box-shadow:inset 0 0 0 2px #3A3A38,inset 0 0 50px #000}
+.door.quiet .sign{border-left-color:#F2D28A}
+.door.done::after{content:"✓";position:absolute;right:-6px;top:-6px;width:16px;height:16px;border-radius:50%;background:#2F7D4A;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center}
+/* ---------- hall: 전시실 ---------- */
+.hall .wall{position:absolute;inset:0 0 40% 0;background:linear-gradient(180deg,#45464400,#00000033 100%),var(--hall)}
+.hall .cove{position:absolute;left:0;right:0;top:0;height:6%;background:linear-gradient(180deg,#5A5B58,#3B3C3A)}
+.hall .floor{position:absolute;inset:60% 0 0 0;background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 30%),repeating-linear-gradient(90deg,transparent 0 158px,rgba(0,0,0,.18) 158px 160px),linear-gradient(180deg,var(--hall-floor),var(--hall-floor-2))}
+.hall .skirt{position:absolute;left:0;right:0;top:calc(60% - 8px);height:8px;background:#26272525;border-top:1px solid #6A6A66}
+.hall .sign{position:absolute;left:3%;top:9%;color:#F4F1EA;font-size:12px;letter-spacing:.12em}
+.hall .sign b{display:block;font-family:"Gowun Batang",serif;font-size:18px;letter-spacing:0;font-weight:700}
+.hall .sign small{display:block;font-size:10px;color:#B8B3A6;letter-spacing:.14em}
+.spot{position:absolute;top:0;width:24%;height:62%;pointer-events:none;background:radial-gradient(ellipse at 50% 8%,var(--spot),rgba(255,241,214,0) 62%);transform:translateX(-50%)}
+.piece{position:absolute;top:18%;width:14%;aspect-ratio:4/3;border:0;padding:0;background:transparent;cursor:pointer;transform:translateX(-50%)}
+.piece .frm{position:absolute;inset:0;background:#F4F1EA;border:2px solid #1F1F1D;box-shadow:0 10px 24px rgba(0,0,0,.55);transition:transform .15s}
+.piece .art{position:absolute;inset:9%;image-rendering:pixelated}
+.piece .glass{position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,0) 40%,var(--glass) 46%,rgba(255,255,255,0) 52%);pointer-events:none}
+.piece.near .frm{transform:translateY(-3px);box-shadow:0 0 0 2px #F2D28A,0 14px 28px rgba(0,0,0,.6)}
+.piece.seen::after{content:"";position:absolute;right:-10px;top:-10px;width:12px;height:12px;border-radius:50%;background:#2F7D4A;border:2px solid #F4F1EA}
+.label{position:absolute;left:50%;top:106%;transform:translateX(-50%);width:96%;background:var(--label);color:var(--label-ink);font-size:9px;line-height:1.35;padding:5px 6px;box-shadow:0 2px 6px rgba(0,0,0,.4);opacity:.92;pointer-events:none;text-align:left}
+.label b{display:block;font-size:10px;font-family:"Gowun Batang",serif}
+.label i{display:block;font-style:normal;color:#6B6558;font-size:8px;margin-top:2px}
+.piece.near .label{opacity:1;width:120%;font-size:10px}
+.piece.unlabeled .label{display:none}
+.piece.unlabeled .frm{filter:brightness(.8)}
+.bench{position:absolute;left:50%;bottom:20%;width:16%;height:6%;transform:translateX(-50%);background:linear-gradient(180deg,#8A7B66,#5E5344);border-radius:2px;box-shadow:0 8px 14px rgba(0,0,0,.45)}
+.bench::before,.bench::after{content:"";position:absolute;bottom:-10px;width:6%;height:10px;background:#3E3830}
+.bench::before{left:10%}.bench::after{right:10%}
+.exit{position:absolute;left:2%;bottom:40%;width:7%;height:30%;border:0;padding:0;background:linear-gradient(180deg,#8E8B83,#6C6960);box-shadow:inset 0 0 0 2px #3B3C3A;cursor:pointer}
+.exit span{position:absolute;left:50%;top:-22px;transform:translateX(-50%);white-space:nowrap;font-size:10px;color:#F4F1EA;background:#2B2B29;padding:2px 6px;letter-spacing:.06em}
+.exit.near{box-shadow:inset 0 0 0 2px #F2D28A}
+/* ---------- quiet room: 사유의 방 ---------- */
+.quiet .bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,#1A1613 0,#070606 60%,#000 100%)}
+.quiet .stars{position:absolute;inset:0 0 50% 0;background-image:radial-gradient(#F2D28A55 0.6px,transparent 1px),radial-gradient(#ffffff33 0.5px,transparent 1px);background-size:38px 26px,57px 41px;opacity:.6}
+.quiet .slope{position:absolute;left:0;right:0;bottom:0;height:44%;background:linear-gradient(180deg,#1C1815,#0B0A09);clip-path:polygon(0 100%,100% 100%,88% 0,12% 0)}
+.quiet .one{position:absolute;left:50%;top:22%;width:16%;aspect-ratio:3/4;transform:translateX(-50%);background:#F4F1EA;border:2px solid #1F1F1D;box-shadow:0 0 80px rgba(242,210,138,.25),0 20px 40px rgba(0,0,0,.8)}
+.quiet .one .art{position:absolute;inset:8%;image-rendering:pixelated}
+.quiet .halo{position:absolute;left:50%;top:0;width:40%;height:70%;transform:translateX(-50%);background:radial-gradient(ellipse at 50% 20%,rgba(255,241,214,.35),rgba(255,241,214,0) 65%);pointer-events:none}
+.quiet .word{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);color:#8C877D;font-size:11px;letter-spacing:.2em;text-align:center;white-space:nowrap}
+.quiet .exit{background:linear-gradient(180deg,#2A2826,#151412);box-shadow:inset 0 0 0 2px #3A3A38}
+/* shared */
+.cat{position:absolute;width:44px;height:44px;image-rendering:pixelated;transform:translate(-50%,-100%);pointer-events:none;filter:drop-shadow(0 6px 3px rgba(0,0,0,.45))}
+.bubble{position:absolute;transform:translate(-50%,-100%);background:#F4F1EA;color:#2B2B29;border-radius:6px;padding:5px 9px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .15s;max-width:60%;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.4)}
+.bubble.on{opacity:1}
+.hud{position:absolute;right:8px;top:8px;font-size:11px;color:#F4F1EA;background:rgba(0,0,0,.5);padding:5px 9px;border-radius:4px;pointer-events:none;letter-spacing:.04em}
+.hint{position:absolute;left:8px;bottom:8px;font-size:11px;color:#F4F1EA;background:rgba(0,0,0,.5);padding:5px 9px;border-radius:4px;pointer-events:none}
+.fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .35s}
+.fade.on{opacity:1}
+.viewer{position:absolute;inset:0;background:rgba(10,10,9,.96);display:none;color:#F1EDE4;padding:18px;overflow:auto}
+.viewer.on{display:block}
+.viewer .card{display:grid;grid-template-columns:1fr 1.1fr;gap:18px;max-width:820px;margin:0 auto}
+.viewer .img{background:#F4F1EA;border:2px solid #1F1F1D;padding:10px;aspect-ratio:4/3;box-shadow:0 20px 40px rgba(0,0,0,.6)}
+.viewer .img div{width:100%;height:100%;image-rendering:pixelated}
+.viewer .lab{margin-top:10px;background:var(--label);color:var(--label-ink);padding:8px 10px;font-size:11px;line-height:1.4}
+.viewer .lab b{font-family:"Gowun Batang",serif;font-size:12px}
+.viewer h3{font-size:20px;color:#fff;margin-bottom:4px}
+.viewer .vm{font-size:12px;color:#CFC8BA;margin-bottom:8px}
+.viewer p{font-size:14px;color:#E3DED2}
+.viewer .btns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.viewer button{font:inherit;font-size:13px;padding:7px 12px;border-radius:6px;border:1px solid #7E7466;background:transparent;color:#F1EDE4;cursor:pointer}
+.viewer button.primary{background:#F4F1EA;border-color:#F4F1EA;color:#1A1511;font-weight:600}
+.viewer button.close{position:absolute;right:12px;top:10px;width:34px;height:34px;padding:0;font-size:18px}
+@media (max-width:640px){.viewer .card{grid-template-columns:1fr}.label{display:none}.piece.near .label{display:block}.hint{display:none}}
+.ctl{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border-top:1px solid var(--line);flex-wrap:wrap}
+.ctl .pad{display:grid;grid-template-columns:repeat(3,36px);gap:4px}
+.ctl button{font:inherit;font-size:14px;width:36px;height:32px;border-radius:6px;border:1px solid var(--line-2);background:var(--ground);color:var(--ink);cursor:pointer}
+.ctl button.act{width:auto;padding:0 14px;background:var(--teal);color:#fff;border-color:var(--teal);font-weight:500}
+.ctl small{color:var(--ink-3);font-size:12px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+@media (max-width:760px){.compare{grid-template-columns:1fr}}
+.compare div{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:14px}
+.compare h3{font-size:15px;font-family:inherit;margin-bottom:6px}
+.compare ul{margin:0;padding-left:18px;color:var(--ink-2)}
+.compare li{margin-bottom:4px}
+.rec{border-left:3px solid var(--teal);background:var(--teal-soft);padding:12px 16px;border-radius:0 8px 8px 0;font-size:14px;margin:12px 0 30px}
+</style>
+
+<header><div class="wide">
+  <div class="eyebrow">Raonlog Museum · Design direction B · Walk the real museum</div>
+  <h1>실제 박물관을 들어가서 관람하는 동선으로</h1>
+  <p>국립중앙박물관의 관람 순서를 그대로 옮겼습니다. 입구를 지나 <b>역사의 길</b>(1층 중앙 복도)을 걷고, 양옆 전시실로 들어가 조명 아래 액자와 명판을 보고, 마지막에 어두운 <b>사유의 방</b>에서 한 점 앞에 섭니다. 화강암 바닥, 어두운 전시실 벽, 스포트라이트, 흰 명판까지 실제 재질을 따랐습니다. 고양이는 여전히 임시 그림입니다.</p>
+</div></header>
+
+<div class="wide">
+<div class="proto">
+  <div class="top"><span class="crumb" id="crumb"><b>입구</b> › 역사의 길</span><span>← → 걷기 · Enter 들어가기 · 바닥 탭 이동</span><button id="reset">처음부터</button></div>
+  <div class="stage" id="stage" tabindex="0" aria-label="박물관. 방향키로 고양이를 움직이세요.">
+    <!-- corridor -->
+    <div class="scene corr on" id="sc-corr">
+      <svg class="bg" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="ceil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EDE9E0"/><stop offset="1" stop-color="#D3CEC3"/></linearGradient>
+          <linearGradient id="wallg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D9D4C8"/><stop offset="1" stop-color="#B9B4A7"/></linearGradient>
+          <linearGradient id="floorg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A5A198"/><stop offset="1" stop-color="#C6C2B9"/></linearGradient>
+          <pattern id="gran" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="none"/><circle cx="3" cy="4" r="0.8" fill="#8F8B82" opacity=".5"/><circle cx="10" cy="11" r="0.7" fill="#8F8B82" opacity=".4"/></pattern>
+        </defs>
+        <rect x="0" y="0" width="1600" height="330" fill="url(#ceil)"/>
+        <g stroke="#C9C4B8" stroke-width="2" opacity=".8"><line x1="0" y1="80" x2="1600" y2="80"/><line x1="0" y1="200" x2="1600" y2="200"/></g>
+        <g fill="#F7F4EC" opacity=".9"><rect x="120" y="120" width="160" height="14" rx="7"/><rect x="520" y="120" width="160" height="14" rx="7"/><rect x="920" y="120" width="160" height="14" rx="7"/><rect x="1320" y="120" width="160" height="14" rx="7"/></g>
+        <rect x="0" y="330" width="1600" height="270" fill="url(#wallg)"/>
+        <g stroke="#A29D91" stroke-width="2"><line x1="0" y1="470" x2="1600" y2="470"/></g>
+        <rect x="0" y="600" width="1600" height="300" fill="url(#floorg)"/>
+        <rect x="0" y="600" width="1600" height="300" fill="url(#gran)"/>
+        <g stroke="#8F8B82" stroke-width="1.5" opacity=".6"><line x1="0" y1="700" x2="1600" y2="700"/><line x1="0" y1="800" x2="1600" y2="800"/></g>
+        <g stroke="#9B978E" stroke-width="1" opacity=".5"><line x1="200" y1="600" x2="200" y2="900"/><line x1="500" y1="600" x2="500" y2="900"/><line x1="800" y1="600" x2="800" y2="900"/><line x1="1100" y1="600" x2="1100" y2="900"/><line x1="1400" y1="600" x2="1400" y2="900"/></g>
+        <!-- pillars -->
+        <g fill="#CFC9BD" stroke="#9B978E" stroke-width="2"><rect x="60" y="300" width="46" height="310"/><rect x="1494" y="300" width="46" height="310"/></g>
+        <!-- pagoda silhouette at the end (경천사탑) -->
+        <g transform="translate(1310,140)" fill="#B7B2A6" stroke="#8F8B82" stroke-width="1.5">
+          <rect x="60" y="400" width="80" height="60"/><rect x="70" y="360" width="60" height="40"/><rect x="50" y="340" width="100" height="20"/>
+          <rect x="74" y="300" width="52" height="40"/><rect x="56" y="282" width="88" height="18"/><rect x="78" y="246" width="44" height="36"/><rect x="62" y="230" width="76" height="16"/>
+          <rect x="82" y="198" width="36" height="32"/><rect x="68" y="184" width="64" height="14"/><rect x="86" y="156" width="28" height="28"/><rect x="74" y="144" width="52" height="12"/><rect x="90" y="120" width="20" height="24"/><rect x="80" y="110" width="40" height="10"/><rect x="96" y="80" width="8" height="30"/>
+        </g>
+        <text x="1410" y="640" font-size="14" fill="#6B6760" font-family="IBM Plex Sans KR" text-anchor="middle" letter-spacing="2">경천사 십층석탑</text>
+        <text x="130" y="585" font-size="13" fill="#6B6760" font-family="IBM Plex Sans KR" letter-spacing="3">PATH TO HISTORY · 역사의 길</text>
+      </svg>
+      <div class="doors" id="doors"></div>
+    </div>
+    <!-- hall -->
+    <div class="scene hall" id="sc-hall">
+      <div class="wall"></div><div class="cove"></div><div class="skirt"></div><div class="floor"></div>
+      <div class="sign" id="hallSign"></div>
+      <div id="spots"></div><div id="pieces"></div>
+      <div class="bench"></div>
+      <button class="exit" id="hallExit"><span>역사의 길로</span></button>
+    </div>
+    <!-- quiet room -->
+    <div class="scene quiet" id="sc-quiet">
+      <div class="bg"></div><div class="stars"></div><div class="halo"></div><div class="slope"></div>
+      <button class="one" id="quietOne" aria-label="한 점 보기"><div class="art" id="quietArt"></div></button>
+      <div class="word" id="quietWord">두루 깊이 생각하고 · 너그러이 살피는</div>
+      <button class="exit" id="quietExit"><span>나가기</span></button>
+    </div>
+    <canvas class="cat" id="cat" width="16" height="16"></canvas>
+    <div class="bubble" id="bubble"></div>
+    <div class="hud" id="hud"></div>
+    <div class="hint" id="hint">문 앞에서 Enter 또는 탭</div>
+    <div class="fade" id="fade"></div>
+    <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="작품 보기">
+      <button class="close" id="vClose" aria-label="닫기">×</button>
+      <div class="card">
+        <div><div class="img"><div id="vImg"></div></div><div class="lab" id="vLab"></div></div>
+        <div><h3 id="vTitle"></h3><div class="vm" id="vMeta"></div><p id="vSummary"></p>
+          <div class="btns"><button id="vPrev">◀ 이전</button><button id="vNext">다음 ▶</button><button class="primary" id="vRead">글 전체 읽기</button></div>
+          <p style="font-size:12px;color:#B8AE9B" id="vRel"></p></div>
+      </div>
+    </div>
+  </div>
+  <div class="ctl">
+    <div class="pad"><span></span><button data-k="up" aria-label="위">▲</button><span></span><button data-k="left" aria-label="왼쪽">◀</button><button data-k="down" aria-label="아래">▼</button><button data-k="right" aria-label="오른쪽">▶</button></div>
+    <button class="act" id="btnAct">들어가기 / 보기</button>
+    <small>복도에서는 좌우로만 걷습니다. 전시실 안에서는 위아래도.</small>
+  </div>
+</div>
+
+<div class="compare">
+  <div><h3>A안 · 1부 프로토타입 (귀여운 픽셀 방)</h3><ul><li>방 하나가 한 화면. 가볍고 빨리 만들 수 있음.</li><li>박물관이라기보다 ‘게임 속 방’ 느낌. 국립중앙박물관과의 연결은 이름뿐.</li><li>캐릭터와 화면의 화풍이 같아 통일감은 좋음.</li></ul></div>
+  <div><h3>B안 · 이 프로토타입 (실제 박물관 관람 동선)</h3><ul><li>입구 → 역사의 길 → 전시실 → 사유의 방. 실제 관람 순서와 재질(화강암, 어두운 벽, 스포트라이트, 흰 명판).</li><li>“박물관에 들어왔다”는 첫 장면이 훨씬 강함. 공유 장면이 됨.</li><li>복도가 로비 역할을 하니 1부의 ‘길 잃지 않기’ 문제도 자연히 풀림.</li><li>그릴 것이 늘어남(복도·전시실·사유의 방 3종 배경). 게임 엔진은 여전히 필요 없음.</li></ul></div>
+</div>
+<div class="rec"><b>제안.</b> B안으로 갑니다. 1부의 결정 중 D2(시점)만 “실제 박물관 관람 뷰: 정면 2.5D, 복도는 좌우 이동, 전시실은 자유 이동”으로 바꾸고, 나머지(탭 이동, 미리보기 창, 여권, 발견 장치, 일반 웹 기술)는 그대로 얹습니다. 고양이 캐릭터는 좌·우 2방향이면 복도에 충분하고, 전시실용으로 앞·뒤가 있으면 더 좋습니다.</div>
+</div>
+
+<script>
+(function(){
+  const HALLS=[
+    {id:'parenting',no:'201',kr:'라온이의 방',en:'KOREAN PARENTING',x:0.15,posts:[
+      {id:'p1',title:"Raon's First Day at a Korean Kindergarten",date:'2026-03-02',material:'iPhone photo, morning light',place:'동네 유치원',summary:'유치원 첫날. 문 앞에서 손을 놓지 못하던 아빠 이야기.',art:['#8EC5E8','#5F9ED1','#F2E6B8']},
+      {id:'p2',title:'Why Korean Kids Start Taekwondo at Six',date:'2026-05-14',material:'cotton belt, gift of the dojang',place:'태권도장',summary:'띠 색깔, 노란 버스, 라온이가 처음 ‘차렷’을 배운 날.',art:['#C9A26B','#7A4F2A','#F3ECDD']},
+      {id:'p3',title:'What Raon Asked at the Museum',date:'2026-09-05',material:'ten questions, recorded',place:'국립중앙박물관',summary:'“왜 부처님은 반쯤 웃어?” 박물관에서 나온 질문 열 개.',art:['#7B7D80','#3D3F42','#D9B663'],unlabeled:true},
+    ]},
+    {id:'adventure',no:'202',kr:'나들이 방',en:'FAMILY ADVENTURES IN SEOUL',x:0.30,posts:[
+      {id:'a1',title:'A Rainy Saturday at the National Museum of Korea',date:'2026-09-05',material:'iPhone photo, rain',place:'국립중앙박물관',summary:'비 오는 토요일, 역사의 길을 따라 걷다 사유의 방에서 멈춘 이야기.',art:['#7B7D80','#3D3F42','#D9B663']},
+      {id:'a2',title:'Han River Picnic with a Seven-Year-Old',date:'2026-05-03',material:'mat, kimbap, first bicycle',place:'한강공원',summary:'라온이가 처음 자전거를 탄 잔디밭.',art:['#8FC7A9','#3E8B6B','#A9D6EA']},
+      {id:'a3',title:'Namsan Cable Car at Dusk',date:'2026-04-12',material:'cable car, 3 minutes',place:'남산',summary:'해 질 무렵 케이블카, 도시의 불빛.',art:['#2B2A4C','#1B1A33','#F2D28A']},
+      {id:'a4',title:'Bukhansan with Kids: The Easy Trail',date:'2026-07-19',material:'two hours, four snack stops',place:'북한산',summary:'7살과 오를 수 있는 코스. 간식 네 번.',art:['#7FA86A','#3F6B3B','#C8E0F0']},
+    ]},
+    {id:'food',no:'203',kr:'맛집 방',en:'FOOD & DINING',x:0.45,posts:[
+      {id:'f1',title:'Kalguksu After the Museum',date:'2026-09-05',material:'anchovy broth, one bowl',place:'용산 칼국수집',summary:'박물관 나와서 먹은 칼국수. 비 오는 날의 정답.',art:['#E6D2A8','#B5883F','#F5F0E4']},
+      {id:'f2',title:'Poplo Pizza: Our Friday Ritual',date:'2026-05-03',material:'pizza, Friday',place:'포플로피자',summary:'한강 피크닉 끝나고 들른 포플로피자.',art:['#E8B26B','#B33F2E','#F3E3B0']},
+      {id:'f3',title:'Meister Makguksu, Summer Edition',date:'2026-07-19',material:'buckwheat, iced broth',place:'마이스터막국수',summary:'북한산 하산 후 막국수.',art:['#E6D2A8','#B5883F','#F5F0E4']},
+    ]},
+    {id:'health',no:'204',kr:'건강 방',en:'HEALTH & WELLNESS',x:0.60,posts:[
+      {id:'h1',title:"Dad's 10,000 Steps Challenge",date:'2026-08-01',material:'pedometer, 31 days',place:'동네',summary:'51세 영업사원의 만 보 걷기 한 달.',art:['#B7D7B0','#5F8F5A','#F2F1EC']},
+      {id:'h2',title:'Hiking as Family Therapy',date:'2026-07-20',material:'trail, child’s pace',place:'북한산',summary:'아이 속도로 걸으면 모두가 덜 지친다.',art:['#7FA86A','#3F6B3B','#C8E0F0']},
+    ]},
+    {id:'messi',no:'205',kr:'메시의 방',en:'LIFE WITH MESSI',x:0.75,posts:[
+      {id:'m1',title:'Messi Meets the Museum Cat Plushie',date:'2026-09-06',material:'plushie, under the sofa',place:'집',summary:'박물관 기념품 고양이 인형과 메시의 첫 대면.',art:['#E8D5B5','#8A6A3B','#F5F0E4']},
+      {id:'m2',title:"Messi's First Vet Visit",date:'2026-04-02',material:'carrier, silence',place:'동물병원',summary:'이동장 안의 침묵과 집에 와서의 복수.',art:['#E8D5B5','#8A6A3B','#F5F0E4']},
+      {id:'m3',title:'The Cat Grass Experiment',date:'2026-06-15',material:'cat grass, ruined',place:'집',summary:'라온이와 메시가 함께 망친 캣그라스.',art:['#A8D57C','#5C9A3E','#F5F0E4']},
+    ]},
+  ];
+  const QUIET={id:'q1',title:'Quiet Room: One Photo, Fifty Words',date:'2026-09-05',material:'one photo, no caption',place:'국립중앙박물관',summary:'Four minutes in front of a statue that has been half-smiling for fourteen hundred years. Raon did not ask anything. That was the point.',art:['#1A1613','#070606','#D9B663']};
+  const $=id=>document.getElementById(id);
+  const stage=$('stage'),catEl=$('cat'),ctx=catEl.getContext('2d'),bubble=$('bubble');
+  const S={scene:'corr',hall:null,seen:new Set(),found:new Set(),visited:new Set(),cur:null,quietT:null};
+  let cat={x:0.08,y:0.86,dir:1,step:0,moving:false},target=null,keys={};
+  function artCSS(c){return `background:radial-gradient(circle at 70% 25%,${c[2]} 0 9%,transparent 10%),linear-gradient(180deg,${c[0]} 0 55%,${c[1]} 55% 100%)`}
+  const A=['....kk....kk....','...kwok..kowk...','...kooookoook...','..koooooooook...','..koeoooooeok...','..koooowpooook..','..kooooooooook..','...kooooooook...','..kkooooooookkk.','.koooooooooooosk','.koooosooooooosk','.koooooooooooosk','..koooooooookk..','..kkoookkkook...','...ko.....ko....','...kk.....kk....'];
+  const B=A.slice(0,13).concat(['..kkookkkkook...','..ko.......ko...','..kk.......kk...']);
+  const SIT=A.slice(0,10).concat(['.koooooooooooosk','.koooooooooooosk','.kooooooooooook.','..kkkkkkkkkkkk..','................','................']);
+  function drawCat(sit){const PAL={k:'#2B2622',o:'#E9A24B',w:'#FFF6E8',p:'#E88080',e:'#2B2622',s:'#C97F2F'}; const f=sit?SIT:((cat.moving&&cat.step%2)?B:A); ctx.clearRect(0,0,16,16); for(let y=0;y<16;y++)for(let x=0;x<16;x++){const ch=f[y][x]; if(ch==='.')continue; ctx.fillStyle=PAL[ch]||PAL.o; ctx.fillRect(cat.dir<0?15-x:x,y,1,1);}}
+
+  // ---- corridor ----
+  function buildCorridor(){const d=$('doors'); d.innerHTML='';
+    HALLS.forEach(h=>{const b=document.createElement('button'); b.className='door'+(S.visited.has(h.id)?' done':''); b.style.left=(h.x*100)+'%'; b.dataset.id=h.id; b.innerHTML=`<span class="sign">${h.no} ${h.kr}<small>${h.en}</small></span>`; b.setAttribute('aria-label',h.kr+' 입장'); b.onclick=e=>{e.stopPropagation(); walkTo(h.x,0.86,()=>enterHall(h.id));}; d.appendChild(b);});
+    const q=document.createElement('button'); q.className='door quiet'+(S.visited.has('quiet')?' done':''); q.style.left='92%'; q.dataset.id='quiet'; q.innerHTML='<span class="sign">사유의 방<small>QUIET CONTEMPLATION</small></span>'; q.onclick=e=>{e.stopPropagation(); walkTo(0.92,0.86,enterQuiet);}; d.appendChild(q);}
+  function nearDoor(){if(S.scene!=='corr')return null; let best=null,bd=1; document.querySelectorAll('#doors .door').forEach(el=>{const x=parseFloat(el.style.left)/100; const d=Math.abs(x-cat.x); if(d<0.045&&d<bd){bd=d;best=el;}}); return best;}
+
+  // ---- hall ----
+  function enterHall(id){fade(()=>{S.scene='hall'; S.hall=HALLS.find(h=>h.id===id); S.visited.add(id); show('sc-hall'); buildHall(); cat.x=0.12; cat.y=0.85; cat.dir=1; $('crumb').innerHTML=`<b>${S.hall.no} ${S.hall.kr}</b> › 전시실`; $('hint').textContent='액자 앞에서 Enter 또는 탭 · 벤치에 앉아도 됩니다'; say(S.hall.kr+'에 들어왔어요');});}
+  function buildHall(){const h=S.hall; $('hallSign').innerHTML=`${h.no}<b>${h.kr}</b><small>${h.en}</small>`; const sp=$('spots'),pc=$('pieces'); sp.innerHTML=''; pc.innerHTML=''; const n=h.posts.length;
+    h.posts.forEach((p,i)=>{const left=22+(62*(i+0.5)/n); p._x=left/100; const s=document.createElement('div'); s.className='spot'; s.style.left=left+'%'; sp.appendChild(s);
+      const b=document.createElement('button'); const unl=p.unlabeled&&!S.found.has(p.id); b.className='piece'+(unl?' unlabeled':'')+(S.seen.has(p.id)?' seen':''); b.style.left=left+'%'; b.dataset.id=p.id;
+      b.innerHTML=`<div class="frm"><div class="art" style="${artCSS(p.art)}"></div><div class="glass"></div></div><div class="label"><b>${p.title}</b>${p.date} · ${p.place}<i>${p.material}</i></div>`;
+      b.setAttribute('aria-label',unl?'이름표 없는 작품':p.title); b.onclick=e=>{e.stopPropagation(); walkTo(p._x,0.7,()=>openPost(p));}; pc.appendChild(b);});}
+  function nearPiece(){if(S.scene!=='hall'||cat.y>0.8)return null; let best=null,bd=1; S.hall.posts.forEach(p=>{const d=Math.abs(p._x-cat.x); if(d<0.05&&d<bd){bd=d;best=p;}}); return best;}
+  function nearExit(){return (S.scene==='hall'||S.scene==='quiet')&&cat.x<0.12;}
+  function nearBench(){return S.scene==='hall'&&Math.abs(cat.x-0.5)<0.09&&cat.y>0.72&&cat.y<0.84;}
+  function leaveToCorridor(){const back=S.hall?S.hall.x:0.92; fade(()=>{S.scene='corr'; show('sc-corr'); buildCorridor(); cat.x=back; cat.y=0.86; $('crumb').innerHTML='<b>역사의 길</b>'; $('hint').textContent='문 앞에서 Enter 또는 탭'; S.hall=null; clearTimeout(S.quietT);});}
+
+  // ---- quiet room ----
+  function enterQuiet(){fade(()=>{S.scene='quiet'; S.visited.add('quiet'); show('sc-quiet'); $('quietArt').style.cssText=artCSS(QUIET.art); cat.x=0.15; cat.y=0.9; cat.dir=1; $('crumb').innerHTML='<b>사유의 방</b>'; $('hint').textContent='명판도 버튼도 없습니다. 가까이 가서 잠시 서 있어 보세요'; bubble.classList.remove('on');});}
+  function quietCheck(){if(S.scene!=='quiet')return; const near=Math.abs(cat.x-0.5)<0.08&&cat.y<0.9; if(near&&!cat.moving){if(!S.quietT){S.quietT=setTimeout(()=>{drawCat(true); $('quietWord').textContent='… 메시가 앉았습니다'; S.seen.add(QUIET.id); render();},4000);}} else {clearTimeout(S.quietT); S.quietT=null;}}
+  $('quietOne').onclick=e=>{e.stopPropagation(); walkTo(0.5,0.82,()=>{});};
+
+  // ---- shared ----
+  function show(id){document.querySelectorAll('.scene').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); render();}
+  function fade(fn){const f=$('fade'); f.classList.add('on'); setTimeout(()=>{fn(); setTimeout(()=>f.classList.remove('on'),60);},360);}
+  let sayT; function say(t){bubble.textContent=t; bubble.classList.add('on'); clearTimeout(sayT); sayT=setTimeout(()=>bubble.classList.remove('on'),1800);}
+  function render(){const W=stage.clientWidth,H=stage.clientHeight; const scale=S.scene==='corr'?0.9:1; catEl.style.width=(44*scale)+'px'; catEl.style.height=(44*scale)+'px'; catEl.style.left=(cat.x*W)+'px'; catEl.style.top=(cat.y*H)+'px'; if(!(S.scene==='quiet'&&S.seen.has(QUIET.id)&&!cat.moving))drawCat(false);
+    const nd=nearDoor(); document.querySelectorAll('#doors .door').forEach(el=>el.classList.toggle('near',el===nd));
+    const np=nearPiece(); document.querySelectorAll('#pieces .piece').forEach(el=>el.classList.toggle('near',!!np&&el.dataset.id===np.id));
+    $('hallExit').classList.toggle('near',S.scene==='hall'&&nearExit()); $('quietExit').classList.toggle('near',S.scene==='quiet'&&nearExit());
+    const total=HALLS.reduce((a,h)=>a+h.posts.length,0)+1; $('hud').textContent=`SEEN ${S.seen.size}/${total} · FOUND ${S.found.size}/1 · HALLS ${S.visited.size}/6`;
+    bubble.style.left=(cat.x*W)+'px'; bubble.style.top=(cat.y*H-48*scale)+'px';}
+  function walkTo(x,y,cb){const minY=S.scene==='corr'?0.86:0.62; const maxY=S.scene==='corr'?0.86:0.95; target={x:Math.min(.97,Math.max(.03,x)),y:Math.min(maxY,Math.max(minY,y)),cb};}
+  let last=0,acc=0;
+  function loop(ts){const dt=Math.min(40,ts-last); last=ts; let vx=0,vy=0; const sp=0.00045*dt; const corr=S.scene==='corr';
+    if(keys.left)vx-=sp; if(keys.right)vx+=sp; if(!corr){if(keys.up)vy-=sp*1.2; if(keys.down)vy+=sp*1.2;}
+    if(vx||vy){target=null;} else if(target){const dx=target.x-cat.x,dy=target.y-cat.y,d=Math.hypot(dx,dy); if(d<0.008){cat.x=target.x;cat.y=target.y;const cb=target.cb;target=null;cb&&cb();} else {vx=dx/d*sp;vy=dy/d*sp;}}
+    const moving=!!(vx||vy); if(moving){const minY=corr?0.86:0.62,maxY=corr?0.86:0.95; cat.x=Math.min(.97,Math.max(.03,cat.x+vx)); cat.y=Math.min(maxY,Math.max(minY,cat.y+vy)); if(vx)cat.dir=vx<0?-1:1; acc+=dt; if(acc>110){acc=0;cat.step++;}}
+    if(moving!==cat.moving||moving){cat.moving=moving; render();} quietCheck(); requestAnimationFrame(loop);}
+  function act(){if($('viewer').classList.contains('on'))return; if(S.scene==='corr'){const d=nearDoor(); if(d){d.dataset.id==='quiet'?enterQuiet():enterHall(d.dataset.id);} else say('전시실 문 앞으로 가 보세요'); return;}
+    if(nearExit()){leaveToCorridor();return;} if(S.scene==='hall'){const p=nearPiece(); if(p){openPost(p);return;} if(nearBench()){say('벤치. 잠시 쉬어요.'); return;} say('액자 앞으로 가 보세요');}}
+  const KM={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',a:'left',d:'right',w:'up',s:'down'};
+  stage.addEventListener('keydown',e=>{if($('viewer').classList.contains('on')){if(e.key==='Escape')closeV(); if(e.key==='ArrowLeft')nav(-1); if(e.key==='ArrowRight')nav(1); e.preventDefault(); return;} const k=KM[e.key]; if(k){keys[k]=true;e.preventDefault();} if(e.key==='Enter'||e.key===' '){act();e.preventDefault();}});
+  stage.addEventListener('keyup',e=>{const k=KM[e.key]; if(k)keys[k]=false;});
+  stage.addEventListener('click',e=>{if($('viewer').classList.contains('on'))return; stage.focus(); const r=stage.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height; walkTo(x,y);});
+  $('hallExit').onclick=e=>{e.stopPropagation(); walkTo(0.06,0.85,leaveToCorridor);}; $('quietExit').onclick=e=>{e.stopPropagation(); walkTo(0.06,0.9,leaveToCorridor);};
+  document.querySelectorAll('.ctl .pad button').forEach(b=>{const k=b.dataset.k; const on=e=>{e.preventDefault();keys[k]=true;stage.focus();},off=()=>{keys[k]=false;}; b.addEventListener('pointerdown',on); b.addEventListener('pointerup',off); b.addEventListener('pointerleave',off); b.addEventListener('pointercancel',off);});
+  $('btnAct').onclick=()=>{stage.focus();act();};
+  $('reset').onclick=()=>{S.seen.clear(); S.found.clear(); S.visited.clear(); S.hall=null; S.scene='corr'; show('sc-corr'); buildCorridor(); cat.x=0.08; cat.y=0.86; $('crumb').innerHTML='<b>입구</b> › 역사의 길'; render();};
+
+  // ---- viewer ----
+  function openPost(p){S.cur=p; S.seen.add(p.id); if(p.unlabeled&&!S.found.has(p.id)){S.found.add(p.id); say('이름표 없는 작품을 찾았어요. 명판이 붙습니다.');}
+    $('vImg').style.cssText=artCSS(p.art); $('vLab').innerHTML=`<b>${p.title}</b><br>${p.date} · ${p.place}<br>${p.material}`; $('vTitle').textContent=p.title; $('vMeta').textContent=`${S.hall.no} ${S.hall.kr} · ${S.hall.en}`; $('vSummary').textContent=p.summary;
+    const others=S.hall.posts.filter(q=>q.id!==p.id&&q.place===p.place); $('vRel').textContent=others.length?'이어 보기: '+others.map(q=>q.title).join(' · '):'';
+    $('viewer').classList.add('on'); buildHall(); render(); $('vClose').focus();}
+  function closeV(){$('viewer').classList.remove('on'); stage.focus();}
+  function nav(d){const ps=S.hall.posts; const i=ps.findIndex(q=>q.id===S.cur.id); const n=ps[(i+d+ps.length)%ps.length]; cat.x=n._x; cat.y=0.7; openPost(n);}
+  $('vClose').onclick=closeV; $('vPrev').onclick=()=>nav(-1); $('vNext').onclick=()=>nav(1); $('vRead').onclick=()=>{say('실제 블로그에서는 여기서 글 페이지로'); closeV();};
+
+  buildCorridor(); render(); window.addEventListener('resize',render); requestAnimationFrame(t=>{last=t;loop(t);});
+})();
+</script>
