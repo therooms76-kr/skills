@@ -1,0 +1,28 @@
+{
+  "name": "default",
+  "version": 1,
+  "tokens": {
+    "granite": "#B9B6AE", "granite2": "#A5A198", "granite3": "#8F8B82",
+    "stone": "#D9D4C8", "stone2": "#C4BEB0",
+    "hall": "#3B3C3A", "hall2": "#2E2F2D", "hallFloor": "#5B5852", "hallFloor2": "#4A4842",
+    "label": "#F4F1EA", "labelInk": "#2B2B29",
+    "spot": "rgba(255,241,214,.5)", "glass": "rgba(255,255,255,.12)",
+    "gold": "#F2D28A", "bronze": "#8A6A3B", "ok": "#2F7D4A", "stamp": "#B23A3A", "teal": "#1E7A72"
+  },
+  "fonts": {
+    "display": "\"Gowun Batang\", Georgia, serif",
+    "body": "\"IBM Plex Sans KR\", \"Apple SD Gothic Neo\", system-ui, sans-serif",
+    "googleFonts": "https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"
+  },
+  "sprites": {
+    "cat": null,
+    "catPlaceholder": "pixel",
+    "collarColors": ["#D95F5F", "#1E7A72", "#D9B663", "#7B5EA7"]
+  },
+  "scenes": {
+    "corridor": { "photo": null, "vx": 0.5, "vy": 0.42, "depth": 5.5, "pagoda": true },
+    "hall": { "photo": null, "caseStyle": "vitrine", "bench": true },
+    "quiet": { "photo": null, "sitAfterMs": 4000 }
+  },
+  "labels": { "style": "paper" }
+}
