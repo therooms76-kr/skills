@@ -12,7 +12,9 @@ export class Museum {
     this.scene = 'corr'; this.hall = null; this.cat = { t: 0.02, lat: 0.5, x: 0.12, y: 0.85, dir: 1, step: 0, moving: false };
     this.target = null; this.keys = {}; this.sat = false; this.quietT = null;
     this.mount(); this.bind();
-    this.viewer = new Viewer(this.stage, { museum, passport, onNavigate: p => this.openPost(p, true), onClose: () => this.stage.focus(), say: t => this.say(t), currentHall: () => this.hall, docentFor: id => this.docentFor(id) });
+    this.viewer = new Viewer(this.stage, { museum, passport, onNavigate: p => this.openPost(p, true), onClose: () => { this.stage.focus(); this.courseNext(); }, say: t => this.say(t), currentHall: () => this.hall, docentFor: id => this.docentFor(id) });
+    passport.onCourse = ids => this.startCourse(ids);
+    const fromUrl = new URLSearchParams(location.search).get('course'); if (fromUrl) { const ids = fromUrl.split(',').filter(id => museum.byId[id]); if (ids.length) { passport.setCourse(ids); setTimeout(() => this.say('코스가 도착했어요. 여권의 “안내 시작”을 눌러 보세요'), 600); } }
     this.doors = buildCorridor(this.corrEls, museum, theme, this.proj.P, passport);
     this.applyPhoto(); this.render();
     let last = 0; const loop = ts => { this.tick(Math.min(40, ts - last)); last = ts; requestAnimationFrame(loop); }; requestAnimationFrame(ts => { last = ts; loop(ts); });
@@ -72,8 +74,26 @@ export class Museum {
   openVault() { const v = this.hall.vault; if (!v || !v.length) return; const idx = v.findIndex(x => !this.passport.has('opened', x.id)); const p = v[idx < 0 ? 0 : idx]; if (!this.passport.has('found', 'vault-' + this.hall.id)) this.passport.found('vault-' + this.hall.id, '수장고 상자를 열었습니다. 묵혀 둔 글이 나왔어요.'); this.viewer.open(p, { fromVault: true }); buildHall(this.hallEls, this.hall, this.theme, this.passport, this.docentFor); this.render(); }
   act() { if (this.viewer.isOpen()) return; if (this.scene === 'corr') { const d = this.nearDoor(); d ? this.enter(d.id) : this.say('벽 쪽의 전시실 문 앞으로 가 보세요'); return; } if (this.nearExit()) return this.leave(); if (this.scene === 'hall') { if (this.nearVault()) return this.openVault(); const p = this.nearCase(); p ? this.openPost(p) : this.say('진열장 앞으로 가 보세요'); } }
   openPost(p, jump = false) { if (jump && p.hall !== this.hall && !(this.hall && this.hall.posts.includes(p))) { this.hall = p.hall; this.passport.visited(p.hall.id); buildHall(this.hallEls, p.hall, this.theme, this.passport, this.docentFor); this.show('hall'); this.q('[data-crumb]').innerHTML = `<b>${p.hall.no} ${p.hall.kr}</b> › 전시실`; } if (jump) { this.cat.x = p._x; this.cat.y = 0.78; } this.viewer.open(p); buildHall(this.hallEls, this.hall, this.theme, this.passport, this.docentFor); this.render(); }
+  // ---- 내 코스 안내: 고양이가 순서대로 걸어가 열어 준다. 창을 닫으면 다음으로 ----
+  startCourse(ids) { const ps = ids.map(id => this.museum.byId[id]).filter(Boolean); if (!ps.length) return; this.course = { ps, i: 0 }; this.say('코스 안내를 시작합니다'); this.goTo(ps[0], 0); }
+  courseNext() { const c = this.course; if (!c || c.busy) return; c.i += 1; if (c.i >= c.ps.length) { this.course = null; this.say('코스를 다 봤어요. 수고했어요'); return; } this.goTo(c.ps[c.i], c.i); }
+  goTo(p, i) {
+    const c = this.course; if (c) c.busy = true; const n = c ? c.ps.length : 1;
+    const openIt = () => { if (c) c.busy = false; this.cat.x = p._x; this.cat.y = 0.78; this.viewer.open(p, { guided: { i, n } }); buildHall(this.hallEls, this.hall, this.theme, this.passport, this.docentFor); this.render(); };
+    const walkInHall = () => { buildHall(this.hallEls, this.hall, this.theme, this.passport, this.docentFor); this.walkTo({ x: p._x, y: 0.78 }, openIt); };
+    const viaCorridor = () => { const d = this.doors.find(x => x.id === p.hall.id); if (!d) return openIt(); this.walkTo({ t: d.t + 0.035, lat: d.side === 'L' ? 0.3 : 0.7 }, () => { this.enter(p.hall.id); setTimeout(walkInHall, 450); }); };
+    if (this.scene === 'hall' && this.hall && (this.hall.posts.includes(p) || this.hall === p.hall)) return walkInHall();
+    if (this.scene === 'corr') return viaCorridor();
+    this.walkTo({ x: 0.06, y: 0.86 }, () => { this.leave(); setTimeout(viaCorridor, 450); });
+  }
   // ---- 이동 ----
-  walkTo(to, cb) { this.target = { ...to, cb }; }
+  walkTo(to, cb) {
+    // 목표는 항상 닿을 수 있는 범위로 제한한다 (벽 위를 탭해도 바닥 끝까지만 간다)
+    const t = { ...to, cb };
+    if (this.scene === 'corr') { t.t = Math.min(0.92, Math.max(0, t.t ?? this.cat.t)); t.lat = Math.min(0.95, Math.max(0.05, t.lat ?? this.cat.lat)); }
+    else { t.x = Math.min(0.97, Math.max(0.03, t.x ?? this.cat.x)); t.y = Math.min(0.95, Math.max(0.62, t.y ?? this.cat.y)); }
+    this.target = t;
+  }
   tick(dt) {
     let moving = false; const k = this.keys, c = this.cat;
     if (this.scene === 'corr') { let vt = 0, vl = 0; const sp = 0.00035 * dt; if (k.up) vt += sp; if (k.down) vt -= sp; if (k.left) vl -= sp * 1.6; if (k.right) vl += sp * 1.6;

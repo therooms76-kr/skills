@@ -50,7 +50,22 @@ const server = http.createServer((req, res) => {
     // 기간 밖이면 특별전 문이 사라지는지
     await p.goto(base + '?now=2027-01-15T12:00:00'); await p.waitForFunction(() => window.__museum);
     const doors2 = await ev(() => window.__museum.app.doors.length); if (doors2 !== 6) fail(`기간 밖인데 특별전 문이 남음: ${doors2}`); else ok('기간이 지나면 특별전 문 사라짐');
-    await p.goto(base + '?now=2026-10-07T18:30:00'); await p.waitForFunction(() => window.__museum);
+    // 내 코스: 링크로 코스가 도착하면 안내 시작 → 첫 글이 열리고, 닫으면 다음 글로
+    await p.goto(base + '?now=2026-10-07T18:30:00&course=why-korean-kids-start-taekwondo-at-six,kalguksu-after-the-museum'); await p.waitForFunction(() => window.__museum);
+    const course = await ev(() => window.__museum.passport.s.course.length); if (course !== 2) fail(`코스 링크 해석 실패: ${course}`); else ok('코스 링크 → 여권에 2개');
+    await p.locator('[data-course-go]').click(); await p.waitForTimeout(4200);
+    let g = await ev(() => ({ hall: window.__museum.app.hall && window.__museum.app.hall.id, open: window.__museum.app.viewer.v.classList.contains('on'), title: document.querySelector('[data-title]').textContent }));
+    if (g.hall !== 'parenting' || !g.open) fail(`코스 1단계 이상: ${JSON.stringify(g)}`); else ok('코스 안내 1/2 (라온이의 방)');
+    await p.locator('[data-close]').click(); await p.waitForTimeout(5200);
+    g = await ev(() => ({ hall: window.__museum.app.hall && window.__museum.app.hall.id, open: window.__museum.app.viewer.v.classList.contains('on') }));
+    if (g.hall !== 'food' || !g.open) fail(`코스 2단계 이상: ${JSON.stringify(g)}`); else ok('코스 안내 2/2 (맛집 방, 방 이동 포함)');
+    await p.locator('[data-close]').click(); await p.waitForTimeout(200);
+    // 모바일 세로
+    await p.setViewportSize({ width: 390, height: 844 }); await p.goto(base + '?now=2026-10-07T18:30:00'); await p.waitForFunction(() => window.__museum);
+    const m = await ev(() => { const st = document.querySelector('[data-stage]').getBoundingClientRect(); return { w: Math.round(st.width), h: Math.round(st.height), overflow: document.documentElement.scrollWidth > window.innerWidth + 1 }; });
+    if (m.overflow || m.h < 250) fail(`모바일 레이아웃 이상: ${JSON.stringify(m)}`); else ok(`모바일 세로 (무대 ${m.w}x${m.h}, 가로 넘침 없음)`);
+    await p.screenshot({ path: path.join(__dirname, 'smoke-mobile.png'), fullPage: false });
+    await p.setViewportSize({ width: 1000, height: 800 }); await p.goto(base + '?now=2026-10-07T18:30:00'); await p.waitForFunction(() => window.__museum);
     await p.screenshot({ path: path.join(__dirname, 'smoke.png') });
   } catch (e) { fail(e.message); }
   if (errs.length) fail('페이지 오류: ' + errs.join(' | '));

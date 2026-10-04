@@ -132,4 +132,26 @@ svg.drawn,svg.over{position:absolute;inset:0;width:100%;height:100%} svg.over{po
 .viewer .docent{margin:6px 0 10px;padding:10px 12px;background:rgba(242,210,138,.08);border:1px solid rgba(242,210,138,.3);border-radius:6px}
 .viewer .docent h4{font-size:11px;letter-spacing:.08em;color:var(--m-gold);margin:0 0 6px;font-family:var(--m-font-body);font-weight:600}
 .viewer .docent .qa{font-size:13px;margin-bottom:6px} .viewer .docent .qa b{display:block;color:#fff;font-weight:600} .viewer .docent .qa span{color:#E3DED2} .viewer .docent .muted{color:#B8AE9B;font-size:12px;margin:0}
+/* 내 코스 */
+.passport .course{list-style:none;padding:0;margin:0 0 8px;counter-reset:c}
+.passport .course li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--line);font-size:12.5px;counter-increment:c}
+.passport .course li:not(.empty)::before{content:counter(c);font-size:10px;color:var(--m-bronze);font-weight:700;min-width:14px}
+.passport .course li span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.passport .course li button{font:inherit;width:22px;height:22px;border-radius:50%;border:1px solid var(--line-2);background:transparent;color:var(--ink-3);cursor:pointer;padding:0}
+.passport .course li.empty{font-size:12px}
+.passport .course-btns{display:flex;gap:6px;margin-bottom:12px}
+.passport .course-btns button{flex:1;font:inherit;font-size:12px;padding:6px 8px;border-radius:6px;border:1px solid var(--line-2);background:var(--ground);color:var(--ink);cursor:pointer}
+.passport .course-btns button[disabled]{opacity:.5;cursor:not-allowed}
+.viewer button[data-course].on{border-color:var(--m-gold);color:var(--m-gold)}
+/* 모바일 세로 화면 */
+@media (max-width:640px){
+  .museum-page{padding:0 10px} .museum-head{padding:14px 0 6px} .museum-head p{font-size:13px}
+  .stage{aspect-ratio:4/3} .top{font-size:11px;padding:6px 10px} .top [data-help]{display:none}
+  .hud{font-size:10px;padding:4px 7px} .sign{font-size:8px!important} .sign small{display:none}
+  .ctl{justify-content:center;gap:14px} .ctl .pad{grid-template-columns:repeat(3,44px);gap:6px} .ctl button{width:44px;height:40px;font-size:16px} .ctl small{display:none} .ctl button.act{height:40px}
+  .case{width:19%} .case .label{font-size:7px} .hsign b{font-size:15px}
+  .viewer{padding:12px} .viewer h3{font-size:17px} .viewer .img{aspect-ratio:16/10}
+  .reader .body{padding:14px 14px 30px} .reader .body p{font-size:15px}
+  .passport{position:static;padding:12px 14px} .passport .stamps{grid-template-columns:repeat(8,1fr)}
+}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}

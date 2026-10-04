@@ -8,8 +8,8 @@ const KEY = 'raonlog-museum-passport-v1';
 export class Passport {
   constructor(el, { museum, theme, onChange }) {
     this.el = el; this.museum = museum; this.theme = theme; this.onChange = onChange || (() => {});
-    this.s = { pts: 0, stamps: [], found: [], opened: [], visited: [], quests: [], collar: 0, shared: false, week: weekKey() };
-    this.load(); this.render();
+    this.s = { pts: 0, stamps: [], found: [], opened: [], visited: [], quests: [], collar: 0, shared: false, week: weekKey(), course: [] };
+    this.onCourse = null; this.load(); this.render();
   }
   load() { try { const raw = localStorage.getItem(KEY); if (raw) { const s = JSON.parse(raw); if (s.week !== weekKey()) { s.quests = []; s.week = weekKey(); } this.s = { ...this.s, ...s }; } } catch (e) { /* 저장소 없음 */ } }
   save() { try { localStorage.setItem(KEY, JSON.stringify(this.s)); } catch (e) { /* 무시 */ } }
@@ -35,7 +35,12 @@ export class Passport {
     this.s.shared = true; this.save();
     return `Raonlog Museum · Path to History\n${line}\nHalls ${this.s.visited.length}/${this.museum.halls.length + 1} · Stamps ${this.s.stamps.length} · Found ${this.s.found.length}\n${this.rank()} · ${this.s.pts} pts`;
   }
-  reset() { this.s = { pts: 0, stamps: [], found: [], opened: [], visited: [], quests: [], collar: 0, shared: false, week: weekKey() }; this.lastLog = '여권이 발급되었습니다.'; this.save(); this.render(); this.onChange(this.s); }
+  // 내 코스 (3부 패턴 A): 진열장 최대 3개를 골라 고양이가 순서대로 안내한다
+  inCourse(id) { return (this.s.course || []).includes(id); }
+  toggleCourse(id) { const c = this.s.course = this.s.course || []; const i = c.indexOf(id); if (i >= 0) c.splice(i, 1); else { if (c.length >= 3) { this.log('코스는 3개까지입니다. 하나를 빼고 담아 주세요.'); this.render(); return false; } c.push(id); } this.save(); this.render(); return true; }
+  setCourse(ids) { this.s.course = ids.slice(0, 3); this.save(); this.render(); }
+  courseUrl() { const u = new URL(location.href); u.searchParams.set('course', (this.s.course || []).join(',')); return u.toString(); }
+  reset() { this.s = { pts: 0, stamps: [], found: [], opened: [], visited: [], quests: [], collar: 0, shared: false, week: weekKey(), course: [] }; this.lastLog = '여권이 발급되었습니다.'; this.save(); this.render(); this.onChange(this.s); }
 
   render() {
     const s = this.s, ri = this.rankIndex(), nx = RANKS[ri + 1];
@@ -52,11 +57,17 @@ export class Passport {
       <h4>THIS WEEK’S QUESTS</h4>
       <ul class="quests">${quests}</ul>
       <div class="log">${this.lastLog || '여권이 발급되었습니다. 복도를 따라 걸어 보세요.'}</div>
+      <h4>MY COURSE <span class="muted">${(s.course || []).length}/3</span></h4>
+      <ol class="course">${(s.course || []).map(id => { const p = this.museum.byId[id]; return p ? `<li><span>${p.title}</span><button data-course-rm="${id}" aria-label="코스에서 빼기">×</button></li>` : ''; }).join('') || '<li class="muted empty">미리보기 창에서 ‘코스에 담기’로 진열장을 고르세요.</li>'}</ol>
+      <div class="course-btns"><button data-course-go ${(s.course || []).length ? '' : 'disabled'}>안내 시작</button><button data-course-link ${(s.course || []).length ? '' : 'disabled'}>코스 링크 복사</button></div>
       <div class="share"><button data-share ${s.stamps.length < 3 ? 'disabled' : ''}>${s.stamps.length < 3 ? '공유 카드 만들기 (도장 3개부터)' : '공유 카드 만들기'}</button><textarea data-sharebox readonly placeholder="도장 3개를 모으면 여기 공유 카드가 생깁니다."></textarea></div>
       <button data-reset class="link">여권 초기화</button>`;
     this.el.querySelectorAll('[data-collar]').forEach(b => b.onclick = () => { s.collar = +b.dataset.collar; this.save(); this.render(); this.onChange(s); });
     this.el.querySelector('[data-share]').onclick = () => { this.el.querySelector('[data-sharebox]').value = this.shareCard(); this.log('공유 카드가 만들어졌습니다. 복사해 어디든 붙여 넣을 수 있어요.'); };
     this.el.querySelector('[data-reset]').onclick = () => { if (confirm('여권을 초기화할까요? 도장과 점수가 지워집니다.')) this.reset(); };
+    this.el.querySelectorAll('[data-course-rm]').forEach(b => b.onclick = () => this.toggleCourse(b.dataset.courseRm));
+    this.el.querySelector('[data-course-go]').onclick = () => this.onCourse && this.onCourse(this.s.course.slice());
+    this.el.querySelector('[data-course-link]').onclick = async () => { const u = this.courseUrl(); try { await navigator.clipboard.writeText(u); this.log('코스 링크를 복사했습니다. 붙여 넣으면 같은 순서로 안내합니다.'); } catch (e) { this.el.querySelector('[data-sharebox]').value = u; this.log('코스 링크를 아래 칸에 넣었습니다.'); } this.render(); };
   }
 }
 function weekKey() { const d = new Date(); const onejan = new Date(d.getFullYear(), 0, 1); return `${d.getFullYear()}-W${Math.ceil(((d - onejan) / 86400000 + onejan.getDay() + 1) / 7)}`; }

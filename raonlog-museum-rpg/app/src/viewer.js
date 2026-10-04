@@ -15,7 +15,7 @@ export class Viewer {
         <div class="card">
           <div><div class="img"><div data-img></div></div><div class="lab" data-lab></div></div>
           <div><h3 data-title></h3><div class="vm" data-meta></div><p data-summary></p>
-            <div class="btns"><button data-prev>◀ 이전</button><button data-next>다음 ▶</button><button class="primary" data-read>글 전체 읽기</button></div>
+            <div class="btns"><button data-prev>◀ 이전</button><button data-next>다음 ▶</button><button class="primary" data-read>글 전체 읽기</button><button data-course>코스에 담기</button></div>
             <div class="docent" data-docent hidden><h4>DOCENT TALK · 메시가 답합니다</h4><div data-docent-body></div></div>
             <div class="rel"><h4>이어 보기</h4><div class="chips" data-rel></div></div></div>
         </div>
@@ -28,9 +28,12 @@ export class Viewer {
       </div>`);
     const q = s => stage.querySelector(s);
     this.v = q('[data-viewer]'); this.r = q('[data-reader]'); this.cur = null;
+    // 창 안의 클릭은 무대(걸어가기)로 새지 않는다
+    this.v.addEventListener('click', e => e.stopPropagation()); this.r.addEventListener('click', e => e.stopPropagation());
     q('[data-close]').onclick = () => this.close(); q('[data-prev]').onclick = () => this.nav(-1); q('[data-next]').onclick = () => this.nav(1);
     q('[data-read]').onclick = () => this.openReader(this.cur); q('[data-back]').onclick = () => { this.r.classList.remove('on'); this.v.classList.add('on'); };
     q('[data-rnext]').onclick = () => { this.nav(1); this.openReader(this.cur); };
+    q('[data-course]').onclick = () => { if (this.passport.toggleCourse(this.cur.id)) this.say(this.passport.inCourse(this.cur.id) ? '코스에 담았어요' : '코스에서 뺐어요'); this.refreshCourseBtn(); };
     q('[data-body]').addEventListener('scroll', () => this.checkRead());
     this.q = q;
   }
@@ -48,9 +51,11 @@ export class Viewer {
     const rs = related(this.museum, p).filter(({ q: x }) => !(x.unlabeled && !this.passport.has('found', x.id)));
     if (!rs.length) rel.innerHTML = '<div class="muted">연결된 글이 아직 없습니다.</div>';
     rs.forEach(({ q: x, why }) => { const b = document.createElement('button'); b.innerHTML = `<span>${esc(x.title)}${x.hall !== p.hall ? ` <small>${esc(x.hall.kr)}</small>` : ''}</span><em>${RELATION_LABEL[why]}</em>`; b.onclick = () => this.onNavigate(x); rel.appendChild(b); });
+    this.refreshCourseBtn();
     this.r.classList.remove('on'); this.v.classList.add('on'); q('[data-close]').focus();
-    this.say(this.passport.has('stamps', p.id) ? '다시 왔네요' : '여기 보세요');
+    this.say(opts.guided ? `코스 ${opts.guided.i + 1}/${opts.guided.n} · 여기예요` : (this.passport.has('stamps', p.id) ? '다시 왔네요' : '여기 보세요'));
   }
+  refreshCourseBtn() { const b = this.q('[data-course]'); if (!this.cur) return; const on = this.passport.inCourse(this.cur.id); b.textContent = on ? '코스에서 빼기' : '코스에 담기'; b.classList.toggle('on', on); }
   close() { this.v.classList.remove('on'); this.r.classList.remove('on'); this.onCloseCb(); }
   nav(d) { const h = this.currentHall() || this.cur.hall; const ps = h.posts.includes(this.cur) ? h.posts : (h.vault && h.vault.includes(this.cur) ? h.vault : this.cur.hall.posts); if (!ps.length) return; const i = ps.findIndex(x => x.id === this.cur.id); this.onNavigate(ps[(i + d + ps.length) % ps.length]); }
   openReader(p) {
