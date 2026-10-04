@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-10-04T00:00:00Z",
+  "generatedBy": "sample (주간 루틴이 이 파일을 갱신한다. 형식: agent/EXHIBITIONS-SCHEMA.md)",
+  "special": [
+    {
+      "id": "three-bowls",
+      "title": "Three Bowls, Three Seasons",
+      "subtitle": "SPECIAL EXHIBITION · NOODLES OF 2026",
+      "from": "2026-10-01",
+      "to": "2026-12-31",
+      "side": "R",
+      "statement": "What did a family of three eat when it was cold, hot, and raining? Three bowls answer it. Raon rated all three “good” and could not be persuaded to rank them. The exhibition respects this.",
+      "posts": ["kalguksu-after-the-museum", "meister-makguksu-summer-edition", "poplo-pizza-our-friday-ritual"]
+    }
+  ],
+  "docent": [
+    {
+      "postId": "a-rainy-saturday-at-the-national-museum-of-korea",
+      "when": { "weekday": 3, "from": "18:00", "to": "21:00" },
+      "questions": [
+        { "q": "Why is the Buddha half-smiling?", "a": "Because nobody has told him the answer yet either. That is the whole point of the room." },
+        { "q": "Why is it dark in here?", "a": "So you look at the statue and not at each other." },
+        { "q": "Can we eat now?", "a": "Yes. This is how the kalguksu post happened." },
+        { "q": "Why do people take pictures instead of looking?", "a": "(ask Dad)" },
+        { "q": "Can Messi come next time?", "a": "No, but Messi is the docent here, which is better." }
+      ]
+    }
+  ]
+}

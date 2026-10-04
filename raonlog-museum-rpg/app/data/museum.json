@@ -1,7 +1,7 @@
 {
   "title": "Raonlog Museum",
   "listUrl": "./sample-content/",
-  "generatedAt": "2026-10-03T09:25:42.165Z",
+  "generatedAt": "2026-10-04T02:16:48.341Z",
   "halls": [
     {
       "id": "parenting",
@@ -27,6 +27,7 @@
           ],
           "trip": null,
           "unlabeled": false,
+          "vault": false,
           "url": null,
           "text": [
             "The taekwondo bus stops outside the apartment at 3:10. It is yellow, it is loud, and it is the highlight of Raon's day.",
@@ -68,6 +69,7 @@
           ],
           "trip": "2026-09-05-museum",
           "unlabeled": false,
+          "vault": false,
           "url": null,
           "text": [
             "It rained the way Seoul rains in September, sideways. We took Line 4 to Ichon and walked the covered path to the museum. Raon counted seventeen umbrellas before we reached the door.",
@@ -99,11 +101,42 @@
           ],
           "trip": "2026-05-03-hangang",
           "unlabeled": false,
+          "vault": false,
           "url": null,
           "text": [
             "A mat, kimbap, and the first time Raon rode a bicycle without the little wheels. It happened on the grass by Ichon Hangang Park at about four in the afternoon, after two falls and one dramatic lie-down.",
             "Shun ran alongside for the first ten meters and then he was gone, wobbling toward the river with the confidence of someone who has not yet learned about brakes.",
             "We had pizza afterward, because that is what you do after a first bicycle ride."
+          ],
+          "art": [
+            "#8FC7A9",
+            "#3E8B6B",
+            "#A9D6EA"
+          ]
+        },
+        {
+          "id": "han-river-one-year-ago",
+          "title": "Han River, One Year Ago",
+          "date": "2025-05-04",
+          "place": "한강공원",
+          "material": "mat, training wheels",
+          "summary": "This is last year's picnic. Same grass, same mat, Raon still on the little wheels and refusing to let anyone take them o",
+          "cover": null,
+          "people": [
+            "raon",
+            "shun"
+          ],
+          "tags": [
+            "picnic",
+            "spring"
+          ],
+          "trip": "2025-05-04-hangang",
+          "unlabeled": false,
+          "vault": true,
+          "url": null,
+          "text": [
+            "This is last year's picnic. Same grass, same mat, Raon still on the little wheels and refusing to let anyone take them off.",
+            "We are putting it next to this year's post because that is what museums do with two objects from the same place: they let you see the year between them."
           ],
           "art": [
             "#8FC7A9",
@@ -140,11 +173,73 @@
           ],
           "trip": "2026-09-05-museum",
           "unlabeled": true,
+          "vault": false,
           "url": null,
           "text": [
             "There is a kalguksu place two streets from Ichon station that we have now been to three times, always in the rain. The broth is anchovy and something else the owner will not tell us.",
             "Raon eats the noodles first and leaves the clams for Dad, which Dad considers a fair trade. This time he also ate the kimchi, which is new.",
             "We paid, put our hoods up, and walked back to the station arguing about whether the museum or the noodles were the best part. The noodles won, two to one."
+          ],
+          "art": [
+            "#E6D2A8",
+            "#B5883F",
+            "#F5F0E4"
+          ]
+        },
+        {
+          "id": "meister-makguksu-summer-edition",
+          "title": "Meister Makguksu, Summer Edition",
+          "date": "2026-07-19",
+          "place": "마이스터막국수",
+          "material": "buckwheat, iced broth",
+          "summary": "Buckwheat noodles in iced broth after a mountain, which is the only correct way to end a mountain in July.",
+          "cover": null,
+          "people": [
+            "raon",
+            "shun",
+            "dad"
+          ],
+          "tags": [
+            "noodles",
+            "summer"
+          ],
+          "trip": "2026-07-19-bukhansan",
+          "unlabeled": false,
+          "vault": false,
+          "url": null,
+          "text": [
+            "Buckwheat noodles in iced broth after a mountain, which is the only correct way to end a mountain in July.",
+            "Raon added too much mustard, said nothing, and finished the bowl. We respected this."
+          ],
+          "art": [
+            "#E6D2A8",
+            "#B5883F",
+            "#F5F0E4"
+          ]
+        },
+        {
+          "id": "poplo-pizza-our-friday-ritual",
+          "title": "Poplo Pizza, Our Friday Ritual",
+          "date": "2026-05-03",
+          "place": "포플로피자",
+          "material": "pizza, Friday",
+          "summary": "Every Friday, same table, same order, one new topping that Raon vetoes and then eats.",
+          "cover": null,
+          "people": [
+            "raon",
+            "shun",
+            "dad"
+          ],
+          "tags": [
+            "pizza"
+          ],
+          "trip": "2026-05-03-hangang",
+          "unlabeled": false,
+          "vault": false,
+          "url": null,
+          "text": [
+            "Every Friday, same table, same order, one new topping that Raon vetoes and then eats.",
+            "The owner knows us now, which in Seoul is the highest honor a restaurant can give a family."
           ],
           "art": [
             "#E6D2A8",
@@ -178,6 +273,7 @@
           ],
           "trip": null,
           "unlabeled": false,
+          "vault": false,
           "url": null,
           "text": [
             "Thirty-one days, ten thousand steps each, a 51-year-old salesman. The museum visit turned out to be eleven thousand on its own.",
@@ -217,6 +313,7 @@
           ],
           "trip": "2026-09-05-museum",
           "unlabeled": false,
+          "vault": false,
           "url": null,
           "text": [
             "We brought home a small cat plushie from the museum shop. Messi, our actual cat, regarded it for a full minute from the top of the bookshelf, then came down, sniffed it twice, and sat on it.",

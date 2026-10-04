@@ -19,32 +19,41 @@ export function buildCorridor({ svg, over, signs, photoEl }, museum, theme, P, p
     s += `</g><ellipse cx="${end[0]}" cy="${end[1] - ph * 0.5}" rx="${pw * 1.6}" ry="${ph * 0.7}" fill="url(#m-glow)" opacity=".5"/>`;
   }
   const doors = museum.halls.map(h => ({ id: h.id, side: h.side, t: h.t, label: `${h.no} ${h.kr}`, sub: h.en }));
+  // 특별전 문: 기간 안에만 복도에 나타난다 (exhibitions.json)
+  (museum.exhibitions.special || []).forEach(x => doors.push({ id: x.id, side: x.side, t: x.t, label: `특별전 · ${x.kr}`, sub: x.to ? `~ ${x.to}` : x.en, special: true }));
   if (museum.quiet) doors.push({ id: 'quiet', side: 'R', t: 0.80, label: '사유의 방', sub: 'QUIET CONTEMPLATION', quiet: true });
   let d2 = '';
   doors.forEach(d => {
     const lat = d.side === 'L' ? 0 : 1;
-    d2 += poly([P(d.t, lat, 0), P(d.t + 0.07, lat, 0), P(d.t + 0.07, lat, 0.62), P(d.t, lat, 0.62)], d.quiet ? '#050505' : '#1D1E1C', '#6E6A62', `data-door="${d.id}" class="doorpoly"`);
+    d2 += poly([P(d.t, lat, 0), P(d.t + 0.07, lat, 0), P(d.t + 0.07, lat, 0.62), P(d.t, lat, 0.62)], d.quiet ? '#050505' : d.special ? '#3A2A1E' : '#1D1E1C', d.special ? '#C9A263' : '#6E6A62', `data-door="${d.id}" class="doorpoly"`);
+    if (d.special) d2 += poly([P(d.t - 0.004, lat, 0.62), P(d.t + 0.074, lat, 0.62), P(d.t + 0.074, lat, 0.72), P(d.t - 0.004, lat, 0.72)], '#8A2E2E', '#5A1E1E'); // 특별전 현수막
     d2 += poly([P(d.t + 0.01, lat, 0.5), P(d.t + 0.06, lat, 0.5), P(d.t + 0.06, lat, 0.58), P(d.t + 0.01, lat, 0.58)], '#2B2B29', '#8C877D');
     d.sign = P(d.t + 0.035, lat, 0.66); d.s = 1 / (1 + d.t * sc.depth);
   });
   svg.innerHTML = s + d2;
-  signs.innerHTML = doors.map(d => { const k = Math.max(0.62, d.s * 1.4); return `<div class="sign ${passport.has('visited', d.id) ? 'done' : ''}" data-id="${d.id}" style="left:${d.sign[0] / 16}%;top:${d.sign[1] / 9}%;font-size:${9 * k}px">${esc(d.label)}<small style="font-size:${7 * k}px">${esc(d.sub)}</small></div>`; }).join('');
+  signs.innerHTML = doors.map(d => { const k = Math.max(0.62, d.s * 1.4); return `<div class="sign ${passport.has('visited', d.id) ? 'done' : ''} ${d.special ? 'special' : ''}" data-id="${d.id}" style="left:${d.sign[0] / 16}%;top:${d.sign[1] / 9}%;font-size:${9 * k}px">${esc(d.label)}<small style="font-size:${7 * k}px">${esc(d.sub)}</small></div>`; }).join('');
   if (sc.photoUrl) photoEl.style.backgroundImage = `url("${sc.photoUrl}")`;
   return doors;
 }
 
-export function buildHall({ signEl, spots, cases, photoEl, bench }, hall, theme, passport) {
+export function buildHall({ signEl, spots, cases, photoEl, bench, vault, statement }, hall, theme, passport, docentFor) {
   const sc = theme.scenes.hall;
-  signEl.innerHTML = `${esc(hall.no)}<b>${esc(hall.kr)}</b><small>${esc(hall.en)}</small>`;
+  signEl.innerHTML = `${esc(hall.no)}<b>${esc(hall.kr)}</b><small>${esc(hall.en)}</small>${hall.special && hall.to ? `<small>~ ${esc(hall.to)}</small>` : ''}`;
+  statement.hidden = !(hall.special && hall.statement); if (hall.special) statement.textContent = hall.statement;
   const n = hall.posts.length; let sp = '', cs = '';
   hall.posts.forEach((p, i) => {
     const left = 24 + (60 * (i + 0.5) / n); p._x = left / 100;
     sp += `<div class="spot" style="left:${left}%"></div>`;
     const unl = p.unlabeled && !passport.has('found', p.id);
+    const dc = docentFor ? docentFor(p.id) : null;
+    const tag = dc ? `<span class="docent-tag ${dc.active ? 'on' : ''}">${dc.active ? '도슨트 진행 중' : esc(dc.label)}</span>` : '';
     cs += `<button class="case ${sc.caseStyle} ${unl ? 'unlabeled' : ''} ${passport.has('stamps', p.id) ? 'seen' : ''}" style="left:${left}%" data-id="${p.id}" aria-label="${unl ? '이름표 없는 진열장' : esc(p.title)}">
-      <div class="glass"><div class="obj"><div class="art" style="${artCSS(p)}"></div></div><div class="label"><b>${esc(p.title)}</b>${esc(p.date)} · ${esc(p.place)}<i>${esc(p.material)}</i></div></div><div class="ped"></div></button>`;
+      ${tag}<div class="glass"><div class="obj"><div class="art" style="${artCSS(p)}"></div></div><div class="label"><b>${esc(p.title)}</b>${esc(p.date)} · ${esc(p.place)}<i>${esc(p.material)}</i></div></div><div class="ped"></div></button>`;
   });
   spots.innerHTML = sp; cases.innerHTML = cs; bench.hidden = !sc.bench;
+  // 수장고 상자: vault 글이 있는 전시실에만 놓인다
+  const hasVault = hall.vault && hall.vault.length > 0; vault.hidden = !hasVault;
+  if (hasVault) { const opened = hall.vault.every(v => passport.has('opened', v.id)); vault.classList.toggle('open', opened); vault.querySelector('span').textContent = opened ? '수장고 · 꺼내 본 글' : '수장고 상자'; }
   if (sc.photoUrl) photoEl.style.backgroundImage = `url("${sc.photoUrl}")`;
 }
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // build-manifest.js — 블로그 글 폴더를 읽어 data/museum.json을 만든다.
 // 사용: node tools/build-manifest.js --posts <글 폴더> [--images <이미지 폴더>] [--out data/museum.json] [--site-url https://raonlog.example] [--list-url /posts]
-// 글은 마크다운. 맨 위 프런트매터(--- ... ---)에서 title, date, category, cover, place, people, tags, trip, material, summary, unlabeled 를 읽는다.
+// 글은 마크다운. 맨 위 프런트매터(--- ... ---)에서 title, date, category, cover, place, people, tags, trip, material, summary, unlabeled, vault 를 읽는다.
+// vault: true 는 진열장 대신 수장고 상자에 들어간다 (From the Vault).
 // category는 5개 방 중 하나: parenting | adventure | food | health | messi (영문 카테고리명도 받는다).
 
 const fs = require('fs'); const path = require('path');
@@ -42,7 +43,7 @@ for (const f of files) {
   const paras = paragraphs(body);
   const post = {
     id, title, date: String(fm.date || '').slice(0, 10), place: fm.place || '', material: fm.material || '', summary: fm.summary || (paras[0] ? paras[0].slice(0, 120) : ''),
-    cover: fm.cover || firstImage(body) || null, people: fm.people || [], tags: fm.tags || [], trip: fm.trip || null, unlabeled: !!fm.unlabeled,
+    cover: fm.cover || firstImage(body) || null, people: fm.people || [], tags: fm.tags || [], trip: fm.trip || null, unlabeled: !!fm.unlabeled, vault: !!fm.vault,
     url: fm.url || (args['site-url'] ? `${String(args['site-url']).replace(/\/$/, '')}/posts/${id}` : null),
     text: paras, art: PALETTE[hall ? hall.id : 'adventure'],
   };
